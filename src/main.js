@@ -1,6 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'bootstrap-icons/font/bootstrap-icons.css'
+import './main.css'
 
 import { onAuthStateChanged } from "firebase/auth";
 import {auth, login, fetchCategories, logout} from './db.js'

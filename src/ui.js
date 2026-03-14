@@ -72,19 +72,25 @@ function setupAddModal() {
     <div class="modal fade" id="addModal" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
+          <div id="modalOverlay" class="modal-loading-overlay">
+          <div class="text-center">
+            <div class="spinner-border text-primary" role="status"></div>
+            <div class="mt-2 fw-bold">Processing...</div>
+          </div>
+        </div>
           <input type="hidden" id="modalTargetCategoryId">
           <div class="modal-header">
-            <h5 class="modal-title">Thêm mục mới</h5>
+            <h5 class="modal-title">Add New Item</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
             <div class="mb-3">
               <label for="newKeyInput" class="form-label">Key</label>
-              <input type="text" class="form-control" id="newKeyInput" placeholder="Nhập Key...">
+              <input type="text" class="form-control" id="newKeyInput" placeholder="Enter Key...">
             </div>
             <div class="mb-3">
               <label for="newValueInput" class="form-label">Value</label>
-              <input type="text" class="form-control" id="newValueInput" placeholder="Nhập Value...">
+              <input type="text" class="form-control" id="newValueInput" placeholder="Enter Value...">
             </div>
           </div>
           <div class="modal-footer">
@@ -179,15 +185,20 @@ async function handleConfirmAdd() {
         alert("Please enter an key and value!");
         return;
     }
+    const overlay = document.getElementById('modalOverlay');
     const categoryId = document.getElementById("modalTargetCategoryId").value;
 
     try {
+        overlay.classList.add('active');
+
         await addItem(categoryId, {key, value});
         const modalElement = document.getElementById('addModal');
         const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
         modalInstance.hide();
+        overlay.classList.remove('active');
         import('./main.js').then(m => m.refreshApp());
     } catch (error) {
+        overlay.classList.remove('active');
         alert("Add failed: " + error.message);
     }
 }
