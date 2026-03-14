@@ -11,7 +11,6 @@ export function setupEnvironment() {
             document.documentElement.classList.add('telegram-mode');
             document.body.classList.add('bg-light');
         } else {
-            console.error("Application aaaaa");
             appContainer.setAttribute('data-environment', 'browser');
         }
     } catch (e) {
@@ -19,8 +18,58 @@ export function setupEnvironment() {
     }
 }
 
-export function renderCategories(categories, containerId) {
-    const container = document.getElementById(containerId);
+export function renderLoginForm(onLoginSuccess, containerId) {
+    const appContainer = document.getElementById(containerId);
+    appContainer.innerHTML = `
+<div class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="card shadow" style="width: 100%; max-width: 400px;">
+        <div class="card-body">
+            <h3 class="card-title text-center mb-4">Admin Login</h3>
+            <div id="login-error" class="alert alert-danger d-none"></div>
+            <form id="login-form">
+                <div class="mb-3">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" id="email" class="form-control" required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <input type="password" id="password" class="form-control" required />
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Login</button>
+            </form>
+        </div>
+    </div>
+</div>
+    `;
+
+    document.getElementById("login-form").addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+        onLoginSuccess(email, password);
+    });
+}
+
+export function renderLogoutForm(onLogoutClick) {
+    const btn = document.createElement("button");
+    btn.className = "btn btn-danger btn-sm position-fixed top-0 end-0 m-3 z-3";
+    btn.innerHTML = '<i class=\"bi bi-box-arrow-right\"></i> Logout';
+    btn.addEventListener('click', async () => {
+        if (confirm("Are you sure you want to log out?")) {
+            await onLogoutClick();
+        }
+    });
+    document.body.appendChild(btn);
+}
+
+/**
+ * @param {Object[]} categories
+ * @param {string} categories[].id
+ * @param {string} categories[].name
+ * @param {string} categories[].updatedAt
+ * @param {HTMLElement} container
+ */
+export function renderCategories(categories, container) {
     container.innerHTML = '';
 
     categories.forEach(category => {
@@ -66,11 +115,11 @@ export function renderCategories(categories, containerId) {
 </div>
         `;
         container.appendChild(categoryCard);
-        attachButtonListeners(categoryCard, containerId);
+        attachButtonListeners(categoryCard, container);
     })
 }
 
-function attachButtonListeners(cardElement, categoryId) {
+function attachButtonListeners(cardElement, container) {
     const updateButton = cardElement.querySelector(".btn-update");
     const addButton = cardElement.querySelector(".btn-add");
 
@@ -83,8 +132,8 @@ function attachButtonListeners(cardElement, categoryId) {
                 value: row.querySelector('.item-value').value
             };
         });
-        alert(`Triggered update for ${categoryId}. Check console.`);
-        console.log(`Dispatching update for ${categoryId}:`, updatedData);
+        alert(`Triggered update for ${container.id}. Check console.`);
+        console.log(`Dispatching update for ${container.id}:`, updatedData);
         // Call your DB update function here
     });
 

@@ -1,20 +1,42 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
-import { fetchCategories } from './db.js'
-import { renderCategories, setupEnvironment } from "./ui.js";
+import { onAuthStateChanged } from "firebase/auth";
+import {auth, login, fetchCategories, logout} from './db.js'
+import {renderCategories, renderLoginForm, renderLogoutForm, setupEnvironment} from "./ui.js";
 
 async function initApp() {
     setupEnvironment();
 
-    const containerId = 'category-container';
-    document.getElementById(containerId).innerHTML = '<div class="spinner-border text-primary" role="status"></div> Loading data...';
-    try {
-        const categories = await fetchCategories();
-        renderCategories(categories, containerId);
-    } catch (error) {
-        document.getElementById(containerId).innerHTML = `<div class="alert alert-danger">Error loading data: ${error.message}</div>`;
-    }
+    const container = document.getElementById('app');
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            renderLogoutForm(async () => {
+                await logout();
+            });
+            container.innerHTML = '<div class="spinner-border text-primary" role="status"></div> Loading data...';
+            try {
+                const categories = await fetchCategories();
+                renderCategories(categories, container);
+            } catch (error) {
+                console.log(error);
+            }
+        } else {
+            renderLoginForm(async (email, password) => {
+                const result = await login(email, password);
+                if (!result.success) {
+                    const errDiv = document.getElementById('login-error');
+                    errDiv.innerText = result.message;
+                    errDiv.classList.remove('d-none');
+                }
+            }, "app");
+
+            const oldBtn = document.querySelector('.btn-danger');
+            if (oldBtn) {
+                oldBtn.remove();
+            }
+        }
+    });
 }
 
 // Bootstrap the application
