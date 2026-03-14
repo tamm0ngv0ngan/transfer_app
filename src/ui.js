@@ -1,4 +1,6 @@
 import { isTMA } from "@telegram-apps/sdk";
+import * as bootstrap from "bootstrap";
+import {addItem, deleteItem, updateItem} from "./db.js";
 
 export function setupEnvironment() {
     const appContainer = document.getElementById("app");
@@ -62,6 +64,134 @@ export function renderLogoutForm(onLogoutClick) {
     document.body.appendChild(btn);
 }
 
+function setupAddModal() {
+    if (document.getElementById("addModal")) {
+        return;
+    }
+    const modalHtml = `
+    <div class="modal fade" id="addModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <input type="hidden" id="modalTargetCategoryId">
+          <div class="modal-header">
+            <h5 class="modal-title">Thêm mục mới</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="newKeyInput" class="form-label">Key</label>
+              <input type="text" class="form-control" id="newKeyInput" placeholder="Nhập Key...">
+            </div>
+            <div class="mb-3">
+              <label for="newValueInput" class="form-label">Value</label>
+              <input type="text" class="form-control" id="newValueInput" placeholder="Nhập Value...">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" id="confirmAddBtn">Add</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    `;
+    document.body.insertAdjacentHTML("beforeend", modalHtml);
+    document.getElementById('confirmAddBtn').addEventListener('click', handleConfirmAdd)
+}
+
+function attachRowListeners(rowElement) {
+    const updateBtn = rowElement.querySelector('.btn-update-row');
+    const deleteBtn = rowElement.querySelector('.btn-delete-row');
+
+    const categoryId = rowElement.getAttribute('data-cat-id');
+    const itemId = rowElement.getAttribute('data-item-id');
+
+    updateBtn.addEventListener('click', async () => {
+        const value = rowElement.querySelector('.item-value').value.trim();
+
+        if (!value) {
+            alert("Value cannot be empty!");
+            return;
+        }
+
+        try {
+            updateBtn.disabled = true;
+            updateBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+            await updateItem(categoryId, itemId, value);
+            import('./main.js').then(m => m.refreshApp());
+            console.log(`[UPDATE SUCCESS] Item ${itemId} updated.`);
+        } catch (e) {
+            alert("Update failed: " + e.message);
+            updateBtn.disabled = false;
+            updateBtn.innerHTML = '<i class="bi bi-arrow-repeat"></i>';
+        }
+
+        const keyInput = rowElement.querySelector('.item-key-input');
+        const keyText = rowElement.querySelector('.item-key-text');
+        const key = keyInput ? keyInput.value : keyText.innerText;
+
+        console.log(`[UPDATE] Cat: ${categoryId} | Item: ${itemId} | Key: ${key} | Value: ${value}`);
+    })
+
+    deleteBtn.addEventListener('click', async () => {
+        if (confirm('Are you sure you want to delete this item?')) {
+            console.log(`[DELETE] Cat: ${categoryId} | Item: ${itemId}`);
+            try {
+                deleteBtn.disabled = true;
+                deleteBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+
+                await deleteItem(categoryId, itemId);
+                import('./main.js').then(m => m.refreshApp());
+            } catch (error) {
+                alert("Delete failed: " + error.message);
+                deleteBtn.disabled = false;
+                deleteBtn.innerHTML = '<i class="bi bi-trash"></i>';
+            }
+        }
+    });
+}
+
+function attachCardListeners(cardElement, categoryId) {
+    const addBtn = cardElement.querySelector('.btn-add');
+
+    addBtn.addEventListener('click', () => {
+        document.getElementById("modalTargetCategoryId").value = categoryId;
+
+        document.getElementById('newKeyInput').value = '';
+        document.getElementById('newValueInput').value = '';
+
+        const modalElement = document.getElementById('addModal');
+        const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
+        modalInstance.show();
+    });
+
+    const existingRows = cardElement.querySelectorAll('tbody tr');
+    existingRows.forEach(existingRow => {
+        attachRowListeners(existingRow);
+    });
+}
+
+async function handleConfirmAdd() {
+    const key = document.getElementById("newKeyInput").value.trim();
+    const value = document.getElementById("newValueInput").value.trim();
+
+    if (!key || !value) {
+        alert("Please enter an key and value!");
+        return;
+    }
+    const categoryId = document.getElementById("modalTargetCategoryId").value;
+
+    try {
+        await addItem(categoryId, {key, value});
+        const modalElement = document.getElementById('addModal');
+        const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
+        modalInstance.hide();
+        import('./main.js').then(m => m.refreshApp());
+    } catch (error) {
+        alert("Add failed: " + error.message);
+    }
+}
+
 /**
  * @param {Object[]} categories
  * @param {string} categories[].id
@@ -71,6 +201,8 @@ export function renderLogoutForm(onLogoutClick) {
  */
 export function renderCategories(categories, container) {
     container.innerHTML = '';
+
+    setupAddModal();
 
     categories.forEach(category => {
         const categoryCard = document.createElement('div');
@@ -83,13 +215,14 @@ export function renderCategories(categories, container) {
 </div>
 <div class="card-body">
     <div class="table-responsive">
-        <table class="table table-bordered table-hover align-middle">
+        <table class="table table-bordered table-hover align-middle" style="table-layout: fixed;">
             <thead class="table-light">
                 <tr>
                     <th scope="col" style="width: 5%">No.</th>
                     <th scope="col" style="width: 20%">Key</th>
-                    <th scope="col" style="width: 55%">Value</th>
+                    <th scope="col" style="width: 40%">Value</th>
                     <th scope="col" style="width: 20%">Updated At</th>
+                    <th scope="col" style="width: 15%" class="text-center">Action</th>
                 </tr>
             </thead>
             <tbody id="tbody-${category.id}">
@@ -99,6 +232,14 @@ export function renderCategories(categories, container) {
                     <td>${item.key}</td>
                     <td><input type="text" class="form-control item-value" value="${item.value}" /></td>
                     <td>${item.updatedAt}</td>
+                    <td class="text-center">
+                        <button class="btn btn-sm btn-success btn-update-row" title="Update">
+                            <i class="bi bi-arrow-repeat"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger btn-delete-row" title="Delete">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
                 </tr>
                 `).join(' ')}
             </tbody>
@@ -108,46 +249,10 @@ export function renderCategories(categories, container) {
         <button class="btn btn-outline-success btn-add" data-cat-id="${category.id}">
         <i class="bi bi-plus-circle"></i> Add New
         </button>
-        <button class="btn btn-primary btn-update" data-cat-id="${category.id}">
-        Update Changes
-        </button>
     </div>
 </div>
         `;
         container.appendChild(categoryCard);
-        attachButtonListeners(categoryCard, container);
-    })
-}
-
-function attachButtonListeners(cardElement, container) {
-    const updateButton = cardElement.querySelector(".btn-update");
-    const addButton = cardElement.querySelector(".btn-add");
-
-    updateButton.addEventListener('click', () => {
-        const rows = cardElement.querySelectorAll('tbody tr');
-        const updatedData = Array.from(rows).map(row => {
-            return {
-                id: row.getAttribute('data-item-id'),
-                key: row.children[1].innerText,
-                value: row.querySelector('.item-value').value
-            };
-        });
-        alert(`Triggered update for ${container.id}. Check console.`);
-        console.log(`Dispatching update for ${container.id}:`, updatedData);
-        // Call your DB update function here
-    });
-
-    addButton.addEventListener('click', () => {
-        const tbody = cardElement.querySelector('tbody');
-        const newRowIndex = tbody.children.length + 1;
-
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-      <td>${newRowIndex}</td>
-      <td><input type="text" class="form-control" placeholder="New Key" /></td>
-      <td><input type="text" class="form-control item-value" placeholder="New Value" /></td>
-      <td>Pending...</td>
-    `;
-        tbody.appendChild(tr);
+        attachCardListeners(categoryCard, category.id);
     });
 }

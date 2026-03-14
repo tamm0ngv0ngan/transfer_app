@@ -70,7 +70,17 @@ export async function logout() {
     }
 }
 
+export async function addItem(categoryId, itemObject) {
+    await new Promise(resolve => setTimeout(resolve, 1000));
+}
 
+export async function updateItem(categoryId, itemId, value) {
+    await new Promise(resolve => setTimeout(resolve, 1000));
+}
+
+export async function deleteItem(categoryId, itemId) {
+    await new Promise(resolve => setTimeout(resolve, 1000));
+}
 
 const createData = async () => {
     try {
