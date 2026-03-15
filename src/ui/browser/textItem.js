@@ -1,68 +1,7 @@
-import { isTMA } from "@telegram-apps/sdk";
+
 import * as bootstrap from "bootstrap";
-import {addTextItem, deleteTextItem, getAllTextItems, updateTextItem} from "../repository/db.js";
+import {addTextItem, deleteTextItem, getAllTextItems, updateTextItem} from "../../repository/db.js";
 
-export function setupEnvironment() {
-    const appContainer = document.getElementById("app");
-
-    try {
-        const isTelegram = isTMA('complete') && window.Telegram?.WebApp?.initData !== "";
-        if (isTelegram) {
-            console.error("Application started!");
-            appContainer.setAttribute('data-environment', 'telegram');
-            document.documentElement.classList.add('telegram-mode');
-            document.body.classList.add('bg-light');
-        } else {
-            appContainer.setAttribute('data-environment', 'browser');
-        }
-    } catch (e) {
-        console.log("Running in standard Web Browser (TMA check failed/bypassed)");
-    }
-}
-
-export function renderLoginForm(onLoginSuccess, containerId) {
-    const appContainer = document.getElementById(containerId);
-    appContainer.innerHTML = `
-<div class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
-    <div class="card shadow" style="width: 100%; max-width: 400px;">
-        <div class="card-body">
-            <h3 class="card-title text-center mb-4">Admin Login</h3>
-            <div id="login-error" class="alert alert-danger d-none"></div>
-            <form id="login-form">
-                <div class="mb-3">
-                    <label class="form-label">Email Address</label>
-                    <input type="email" id="email" class="form-control" required />
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Password</label>
-                    <input type="password" id="password" class="form-control" required />
-                </div>
-                <button type="submit" class="btn btn-primary w-100">Login</button>
-            </form>
-        </div>
-    </div>
-</div>
-    `;
-
-    document.getElementById("login-form").addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const email = document.getElementById("email").value;
-        const password = document.getElementById("password").value;
-        onLoginSuccess(email, password);
-    });
-}
-
-export function renderLogoutForm(onLogoutClick) {
-    const btn = document.createElement("button");
-    btn.className = "btn btn-danger btn-sm position-fixed top-0 end-0 m-3 z-3";
-    btn.innerHTML = '<i class=\"bi bi-box-arrow-right\"></i> Logout';
-    btn.addEventListener('click', async () => {
-        if (confirm("Are you sure you want to log out?")) {
-            await onLogoutClick();
-        }
-    });
-    document.body.appendChild(btn);
-}
 
 async function handleConfirmTextAdd() {
     const key = document.getElementById("newTextKeyInput").value.trim();
@@ -82,7 +21,7 @@ async function handleConfirmTextAdd() {
         const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
         modalInstance.hide();
         overlay.classList.remove('active');
-        import('../main.js').then(m => m.refreshApp());
+        import('../../main.js').then(m => m.refreshApp());
     } catch (error) {
         overlay.classList.remove('active');
         alert("Add failed: " + error.message);
@@ -98,11 +37,11 @@ function setupAddTextModal() {
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div id="textModalOverlay" class="modal-loading-overlay">
-          <div class="text-center">
-            <div class="spinner-border text-primary" role="status"></div>
-            <div class="mt-2 fw-bold">Processing...</div>
+            <div class="text-center">
+              <div class="spinner-border text-primary" role="status"></div>
+              <div class="mt-2 fw-bold">Processing...</div>
+            </div>
           </div>
-        </div>
           <div class="modal-header">
             <h5 class="modal-title">Add New Item</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -124,7 +63,7 @@ function setupAddTextModal() {
         </div>
       </div>
     </div>
-    `;
+`;
     document.body.insertAdjacentHTML("beforeend", modalHtml);
     document.getElementById('confirmTextAddBtn').addEventListener('click', handleConfirmTextAdd)
 }
@@ -151,7 +90,7 @@ function attachRowListeners(rowElement) {
             updateBtn.disabled = true;
             updateBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
             await updateTextItem(itemId, value);
-            import('../main.js').then(m => m.refreshApp());
+            import('../../main.js').then(m => m.refreshApp());
         } catch (e) {
             alert("Update failed: " + e.message);
             updateBtn.disabled = false;
@@ -166,7 +105,7 @@ function attachRowListeners(rowElement) {
                 deleteBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
 
                 await deleteTextItem(itemId);
-                import('../main.js').then(m => m.refreshApp());
+                import('../../main.js').then(m => m.refreshApp());
             } catch (error) {
                 alert("Delete failed: " + error.message);
                 deleteBtn.disabled = false;
