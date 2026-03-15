@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { initializeAppCheck, ReCaptchaEnterpriseProvider } from 'firebase/app-check';
-import { getFirestore, query, collection, getDocs, orderBy, addDoc, serverTimestamp } from 'firebase/firestore';
+import { getFirestore, query, collection, doc, getDocs, orderBy, addDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { formatFirestoreTimestamp } from "../util/time.js";
 
 const firebaseConfig = {
@@ -97,8 +97,16 @@ export async function addTextItem(textItem) {
     await addDoc(collection(db, "text_items"), {key, value, updatedAt});
 }
 
+/**
+ * @param {string} itemId
+ * @param {string} value
+* */
 export async function updateTextItem(itemId, value) {
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    const docRef = doc(db, "text_items", itemId);
+    await updateDoc(docRef, {
+        value,
+        updatedAt: serverTimestamp()
+    });
 }
 
 export async function deleteTextItem(itemId) {
