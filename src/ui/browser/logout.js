@@ -7,7 +7,7 @@ import { logout } from "../../repository/db.js";
 export function renderLogoutForm(container) {
     const btn = document.createElement("button");
     btn.className = "btn btn-danger btn-sm d-flex justify-content-end";
-    btn.innerHTML = '<i class="bi bi-box-arrow-right"></i> Logout';
+    btn.innerHTML = '<i class="bi bi-box-arrow-right me-1"></i> Logout';
 
     const buttonContainer = document.createElement("div");
     buttonContainer.classList.add("d-flex", "justify-content-end", "mb-3");
