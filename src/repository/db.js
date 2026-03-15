@@ -1,7 +1,8 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { initializeAppCheck, ReCaptchaEnterpriseProvider } from 'firebase/app-check';
-import { getFirestore, query, collection, getDocs } from 'firebase/firestore';
+import { getFirestore, query, collection, getDocs, orderBy, addDoc, serverTimestamp } from 'firebase/firestore';
+import { formatFirestoreTimestamp } from "../util/time.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyCl2v8Fy8hPzodHbTzj9dLO8Nz8_sjbet8",
@@ -79,11 +80,12 @@ export async function logout() {
  * @return {TextItem[]}
 * */
 export async function getAllTextItems() {
-    const q = query(collection(db, "text_items"));
+    const q = query(collection(db, "text_items"), orderBy("updatedAt", "desc"));
     const querySnapshot = await getDocs(q);
     return querySnapshot.docs.map(doc => ({
         id: doc.id,
-        ...doc.data()
+        ...doc.data(),
+        updatedAt: formatFirestoreTimestamp(doc.data().updatedAt),
     }));
 }
 
@@ -91,8 +93,8 @@ export async function getAllTextItems() {
  * @param textItem
  */
 export async function addTextItem(textItem) {
-    const { id, key, value, updatedAt = new Date().toISOString() } = textItem;
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    const { key, value, updatedAt = serverTimestamp() } = textItem;
+    await addDoc(collection(db, "text_items"), {key, value, updatedAt});
 }
 
 export async function updateTextItem(itemId, value) {
