@@ -72,7 +72,8 @@ export async function logout() {
  * @property {string} id
  * @property {string} key
  * @property {string} value
- * @property {string} updatedAt - when create/update item, code js auto add
+ * @property {string} createdAt - when create item
+ * @property {string} updatedAt - when update item, code js auto add
  * */
 
 
@@ -80,7 +81,7 @@ export async function logout() {
  * @return {TextItem[]}
 * */
 export async function getAllTextItems() {
-    const q = query(collection(db, "text_items"), orderBy("updatedAt", "desc"));
+    const q = query(collection(db, "text_items"), orderBy("createdAt", "desc"));
     const querySnapshot = await getDocs(q);
     return querySnapshot.docs.map(doc => ({
         id: doc.id,
@@ -93,8 +94,8 @@ export async function getAllTextItems() {
  * @param textItem
  */
 export async function addTextItem(textItem) {
-    const { key, value, updatedAt = serverTimestamp() } = textItem;
-    await addDoc(collection(db, "text_items"), {key, value, updatedAt});
+    const { key, value, createdAt = serverTimestamp(), updatedAt = serverTimestamp() } = textItem;
+    await addDoc(collection(db, "text_items"), {key, value, createdAt, updatedAt});
 }
 
 /**
