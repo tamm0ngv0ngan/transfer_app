@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { initializeAppCheck, ReCaptchaEnterpriseProvider } from 'firebase/app-check';
-import { getFirestore } from 'firebase/firestore';
+import { getFirestore, query, collection, getDocs } from 'firebase/firestore';
 
 const firebaseConfig = {
     apiKey: "AIzaSyCl2v8Fy8hPzodHbTzj9dLO8Nz8_sjbet8",
@@ -13,10 +13,6 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-//
-// if (location.hostname === "localhost") {
-//     self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
-// }
 
 // noinspection JSUnusedLocalSymbols
 const appCheck = initializeAppCheck(app, {
@@ -24,7 +20,7 @@ const appCheck = initializeAppCheck(app, {
     isTokenAutoRefreshEnabled: true
 })
 const auth = getAuth(app);
-const db = getFirestore(app);
+const db = getFirestore(app, "transfer-app");
 
 
 function formatAuthError(errorCode) {
@@ -70,59 +66,41 @@ export async function logout() {
     }
 }
 
-export async function addItem(categoryId, itemObject) {
+/**
+ * @typedef {Object} TextItem
+ * @property {string} id
+ * @property {string} key
+ * @property {string} value
+ * @property {string} updatedAt - when create/update item, code js auto add
+ * */
+
+
+/**
+ * @return {TextItem[]}
+* */
+export async function getAllTextItems() {
+    const q = query(collection(db, "text_items"));
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+    }));
+}
+
+/**
+ * @param textItem
+ */
+export async function addTextItem(textItem) {
+    const { id, key, value, updatedAt = new Date().toISOString() } = textItem;
     await new Promise(resolve => setTimeout(resolve, 1000));
 }
 
-export async function updateItem(categoryId, itemId, value) {
+export async function updateTextItem(itemId, value) {
     await new Promise(resolve => setTimeout(resolve, 1000));
 }
 
-export async function deleteItem(categoryId, itemId) {
+export async function deleteTextItem(itemId) {
     await new Promise(resolve => setTimeout(resolve, 1000));
-}
-
-const createData = async () => {
-    try {
-
-    } catch (e) {
-        console.error("Error adding document: ", e);
-    }
-}
-
-
-export async function fetchCategories() {
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-    return [
-        {
-            id: "cat_1",
-            name: "System Config",
-            items: [
-                { id: "item_1", key: "MAX_USERS", value: "100", updatedAt: "2026-03-14 10:00:00" },
-                { id: "item_2", key: "MAINTENANCE_MODE", value: "false", updatedAt: "2026-03-14 10:05:00" }
-            ]
-        },
-        {
-            id: "cat_2",
-            name: "API Settings",
-            items: [
-                { id: "item_3", key: "TIMEOUT_MS", value: "5000", updatedAt: "2026-03-13 15:30:00" }
-            ]
-        }
-    ];
-}
-
-export async function updateCategoryItems(categoryId, updatedItems) {
-    console.log(`Updating category ${categoryId}:`, updatedItems);
-    // Implementation for DB update goes here
-    return true;
-}
-
-export async function addCategoryItem(categoryId, newItem) {
-    console.log(`Adding to ${categoryId}:`, newItem);
-    // Implementation for DB insert goes here
-    return true;
 }
 
 export { auth }

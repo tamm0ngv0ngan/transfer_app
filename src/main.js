@@ -1,17 +1,16 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'bootstrap-icons/font/bootstrap-icons.css'
-import './main.css'
+import './css/main.css'
 
 import { onAuthStateChanged } from "firebase/auth";
-import {auth, login, fetchCategories, logout} from './db.js'
-import {renderCategories, renderLoginForm, renderLogoutForm, setupEnvironment} from "./ui.js";
+import {auth, login, logout} from './repository/db.js'
+import {renderHomePage, renderLoginForm, renderLogoutForm, setupEnvironment} from "./ui/ui.js";
 
 export async function refreshApp() {
     const container = document.getElementById('app');
     try {
-        const categories = await fetchCategories();
-        renderCategories(categories, container);
+        await renderHomePage(container);
     } catch (error) {
         console.log(error);
     }

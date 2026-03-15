@@ -1,6 +1,6 @@
 import { isTMA } from "@telegram-apps/sdk";
 import * as bootstrap from "bootstrap";
-import {addItem, deleteItem, updateItem} from "./db.js";
+import {addTextItem, deleteTextItem, getAllTextItems, updateTextItem} from "../repository/db.js";
 
 export function setupEnvironment() {
     const appContainer = document.getElementById("app");
@@ -64,52 +64,79 @@ export function renderLogoutForm(onLogoutClick) {
     document.body.appendChild(btn);
 }
 
-function setupAddModal() {
-    if (document.getElementById("addModal")) {
+async function handleConfirmTextAdd() {
+    const key = document.getElementById("newTextKeyInput").value.trim();
+    const value = document.getElementById("newTextValueInput").value.trim();
+
+    if (!key || !value) {
+        alert("Please enter an key and value!");
+        return;
+    }
+    const overlay = document.getElementById('textModalOverlay');
+
+    try {
+        overlay.classList.add('active');
+
+        await addTextItem({key, value});
+        const modalElement = document.getElementById('addTextModal');
+        const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
+        modalInstance.hide();
+        overlay.classList.remove('active');
+        import('../main.js').then(m => m.refreshApp());
+    } catch (error) {
+        overlay.classList.remove('active');
+        alert("Add failed: " + error.message);
+    }
+}
+
+function setupAddTextModal() {
+    if (document.getElementById("addTextModal")) {
         return;
     }
     const modalHtml = `
-    <div class="modal fade" id="addModal" tabindex="-1" aria-hidden="true">
+    <div class="modal fade" id="addTextModal" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-          <div id="modalOverlay" class="modal-loading-overlay">
+          <div id="textModalOverlay" class="modal-loading-overlay">
           <div class="text-center">
             <div class="spinner-border text-primary" role="status"></div>
             <div class="mt-2 fw-bold">Processing...</div>
           </div>
         </div>
-          <input type="hidden" id="modalTargetCategoryId">
           <div class="modal-header">
             <h5 class="modal-title">Add New Item</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
             <div class="mb-3">
-              <label for="newKeyInput" class="form-label">Key</label>
-              <input type="text" class="form-control" id="newKeyInput" placeholder="Enter Key...">
+              <label for="newTextKeyInput" class="form-label">Key</label>
+              <input type="text" class="form-control" id="newTextKeyInput" placeholder="Enter Key...">
             </div>
             <div class="mb-3">
-              <label for="newValueInput" class="form-label">Value</label>
-              <input type="text" class="form-control" id="newValueInput" placeholder="Enter Value...">
+              <label for="newTextValueInput" class="form-label">Value</label>
+              <input type="text" class="form-control" id="newTextValueInput" placeholder="Enter Value...">
             </div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-primary" id="confirmAddBtn">Add</button>
+            <button type="button" class="btn btn-primary" id="confirmTextAddBtn">Add</button>
           </div>
         </div>
       </div>
     </div>
     `;
     document.body.insertAdjacentHTML("beforeend", modalHtml);
-    document.getElementById('confirmAddBtn').addEventListener('click', handleConfirmAdd)
+    document.getElementById('confirmTextAddBtn').addEventListener('click', handleConfirmTextAdd)
 }
 
+
+/**
+ * @param {HTMLElement} rowElement
+ */
 function attachRowListeners(rowElement) {
     const updateBtn = rowElement.querySelector('.btn-update-row');
     const deleteBtn = rowElement.querySelector('.btn-delete-row');
 
-    const categoryId = rowElement.getAttribute('data-cat-id');
     const itemId = rowElement.getAttribute('data-item-id');
 
     updateBtn.addEventListener('click', async () => {
@@ -123,31 +150,23 @@ function attachRowListeners(rowElement) {
         try {
             updateBtn.disabled = true;
             updateBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
-            await updateItem(categoryId, itemId, value);
-            import('./main.js').then(m => m.refreshApp());
-            console.log(`[UPDATE SUCCESS] Item ${itemId} updated.`);
+            await updateTextItem(itemId, value);
+            import('../main.js').then(m => m.refreshApp());
         } catch (e) {
             alert("Update failed: " + e.message);
             updateBtn.disabled = false;
             updateBtn.innerHTML = '<i class="bi bi-arrow-repeat"></i>';
         }
-
-        const keyInput = rowElement.querySelector('.item-key-input');
-        const keyText = rowElement.querySelector('.item-key-text');
-        const key = keyInput ? keyInput.value : keyText.innerText;
-
-        console.log(`[UPDATE] Cat: ${categoryId} | Item: ${itemId} | Key: ${key} | Value: ${value}`);
     })
 
     deleteBtn.addEventListener('click', async () => {
         if (confirm('Are you sure you want to delete this item?')) {
-            console.log(`[DELETE] Cat: ${categoryId} | Item: ${itemId}`);
             try {
                 deleteBtn.disabled = true;
                 deleteBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
 
-                await deleteItem(categoryId, itemId);
-                import('./main.js').then(m => m.refreshApp());
+                await deleteTextItem(itemId);
+                import('../main.js').then(m => m.refreshApp());
             } catch (error) {
                 alert("Delete failed: " + error.message);
                 deleteBtn.disabled = false;
@@ -157,71 +176,44 @@ function attachRowListeners(rowElement) {
     });
 }
 
-function attachCardListeners(cardElement, categoryId) {
-    const addBtn = cardElement.querySelector('.btn-add');
 
+function attachTextItemListeners(textContainer) {
+    const addBtn = document.getElementById("btn-add-text-id");
     addBtn.addEventListener('click', () => {
-        document.getElementById("modalTargetCategoryId").value = categoryId;
+        document.getElementById('newTextKeyInput').value = '';
+        document.getElementById('newTextValueInput').value = '';
 
-        document.getElementById('newKeyInput').value = '';
-        document.getElementById('newValueInput').value = '';
-
-        const modalElement = document.getElementById('addModal');
+        const modalElement = document.getElementById('addTextModal');
         const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
         modalInstance.show();
     });
 
-    const existingRows = cardElement.querySelectorAll('tbody tr');
+    const existingRows = textContainer.querySelectorAll('tbody tr');
     existingRows.forEach(existingRow => {
         attachRowListeners(existingRow);
     });
 }
 
-async function handleConfirmAdd() {
-    const key = document.getElementById("newKeyInput").value.trim();
-    const value = document.getElementById("newValueInput").value.trim();
-
-    if (!key || !value) {
-        alert("Please enter an key and value!");
-        return;
-    }
-    const overlay = document.getElementById('modalOverlay');
-    const categoryId = document.getElementById("modalTargetCategoryId").value;
-
-    try {
-        overlay.classList.add('active');
-
-        await addItem(categoryId, {key, value});
-        const modalElement = document.getElementById('addModal');
-        const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
-        modalInstance.hide();
-        overlay.classList.remove('active');
-        import('./main.js').then(m => m.refreshApp());
-    } catch (error) {
-        overlay.classList.remove('active');
-        alert("Add failed: " + error.message);
-    }
-}
 
 /**
- * @param {Object[]} categories
- * @param {string} categories[].id
- * @param {string} categories[].name
- * @param {string} categories[].updatedAt
+ * @typedef {Object} TextItem
+ * @property {string} id - id of Item, auto generate by Firebase
+ * @property {string} key
+ * @property {string} value
+ * @property {string} updatedAt - when create/update item, code js auto add
+* */
+
+/**
+ * @param {TextItem[]} textItems
  * @param {HTMLElement} container
  */
-export function renderCategories(categories, container) {
-    container.innerHTML = '';
+function renderTextItems(textItems, container) {
+    const textContainer = document.createElement('div');
+    textContainer.className = 'card mb-4 shadow-sm';
 
-    setupAddModal();
-
-    categories.forEach(category => {
-        const categoryCard = document.createElement('div');
-        categoryCard.className = 'card mb-4 shadow-sm';
-
-        categoryCard.innerHTML = `
+    textContainer.innerHTML = `
 <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-    <h5 class="mb-0">${category.name}</h5>
+    <h5 class="mb-0">Text Items</h5>
     <span class="badge bg-secondary">Environment: ${document.getElementById('app').getAttribute('data-environment')}</span>        
 </div>
 <div class="card-body">
@@ -236,8 +228,8 @@ export function renderCategories(categories, container) {
                     <th scope="col" style="width: 15%" class="text-center">Action</th>
                 </tr>
             </thead>
-            <tbody id="tbody-${category.id}">
-                ${category.items.map((item, index) => `
+            <tbody id="tbody-text-id">
+                ${textItems.map((item, index) => `
                 <tr data-item-id="${item.id}">
                     <td>${index + 1}</td>
                     <td>${item.key}</td>
@@ -257,13 +249,23 @@ export function renderCategories(categories, container) {
         </table>
     </div>
     <div class="d-flex justify-content-end gap-2 mt-3">
-        <button class="btn btn-outline-success btn-add" data-cat-id="${category.id}">
+        <button id="btn-add-text-id" class="btn btn-outline-success btn-add">
         <i class="bi bi-plus-circle"></i> Add New
         </button>
     </div>
 </div>
-        `;
-        container.appendChild(categoryCard);
-        attachCardListeners(categoryCard, category.id);
-    });
+    `;
+    container.appendChild(textContainer);
+    attachTextItemListeners(textContainer);
+}
+
+/**
+ * @param {HTMLElement} container
+ */
+export async function renderHomePage(container) {
+    setupAddTextModal();
+
+    const textItems = await getAllTextItems();
+    container.innerHTML = '';
+    renderTextItems(textItems, container);
 }
