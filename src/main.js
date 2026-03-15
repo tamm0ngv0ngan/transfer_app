@@ -5,20 +5,10 @@ import 'bootstrap-icons/font/bootstrap-icons.css'
 import './css/main.css'
 
 import { onAuthStateChanged } from "firebase/auth";
-import { auth, login, logout} from './repository/db.js'
-import { renderHomePage } from "./ui/browser/textItem.js";
+import { auth } from './repository/db.js'
+import {renderItemTable, loadTextItems} from "./ui/browser/textItem.js";
 import { renderLoginForm } from "./ui/browser/login.js";
 import { renderLogoutForm } from "./ui/browser/logout.js";
-
-
-export async function refreshApp() {
-    const container = document.getElementById('app');
-    try {
-        await renderHomePage(container);
-    } catch (error) {
-        console.log(error);
-    }
-}
 
 
 function setupEnvironment() {
@@ -40,24 +30,15 @@ function setupEnvironment() {
 
 async function initApp() {
     setupEnvironment();
-
     const container = document.getElementById('app');
     onAuthStateChanged(auth, async (user) => {
         if (user) {
-            renderLogoutForm(async () => {
-                await logout();
-            });
-            container.innerHTML = '<div class="spinner-border text-primary" role="status"></div> Loading data...';
-            await refreshApp();
+            container.innerHTML = '';
+            renderLogoutForm(container);
+            renderItemTable(container);
+            await loadTextItems();
         } else {
-            renderLoginForm(async (email, password) => {
-                const result = await login(email, password);
-                if (!result.success) {
-                    const errDiv = document.getElementById('login-error');
-                    errDiv.innerText = result.message;
-                    errDiv.classList.remove('d-none');
-                }
-            }, "app");
+            renderLoginForm( container);
 
             const oldBtn = document.querySelector('.btn-danger');
             if (oldBtn) {

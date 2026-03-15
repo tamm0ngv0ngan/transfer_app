@@ -1,9 +1,11 @@
+import {login} from "../../repository/db.js";
 
 
-
-export function renderLoginForm(onLoginSuccess, containerId) {
-    const appContainer = document.getElementById(containerId);
-    appContainer.innerHTML = `
+/**
+ * @param {HTMLElement} container
+ */
+export function renderLoginForm(container) {
+    container.innerHTML = `
 <div class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
     <div class="card shadow" style="width: 100%; max-width: 400px;">
         <div class="card-body">
@@ -29,6 +31,12 @@ export function renderLoginForm(onLoginSuccess, containerId) {
         e.preventDefault();
         const email = document.getElementById("email").value;
         const password = document.getElementById("password").value;
-        onLoginSuccess(email, password);
+
+        const result = await login(email, password);
+        if (!result.success) {
+            const errDiv = document.getElementById('login-error');
+            errDiv.innerText = result.message;
+            errDiv.classList.remove('d-none');
+        }
     });
 }
