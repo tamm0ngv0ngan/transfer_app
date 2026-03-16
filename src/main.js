@@ -9,7 +9,7 @@ import { auth } from './repository/db.js'
 import {renderItemTable, loadTextItems} from "./ui/browser/textItem.js";
 import { renderLoginForm } from "./ui/browser/login.js";
 import { renderLogoutForm } from "./ui/browser/logout.js";
-import {renderFileTable} from "./ui/browser/fileItem.js";
+import {loadFileItems, renderFileTable} from "./ui/browser/fileItem.js";
 
 
 function setupEnvironment() {
@@ -39,6 +39,7 @@ async function initApp() {
             renderItemTable(container);
             renderFileTable(container)
             await loadTextItems();
+            await loadFileItems();
         } else {
             renderLoginForm( container);
 

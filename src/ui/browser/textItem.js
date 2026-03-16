@@ -190,7 +190,7 @@ export async function loadTextItems() {
             <td><input type="text" class="form-control item-value" value="${item.value}" /></td>
             <td>${item.updatedAt}</td>
             <td class="text-center">
-                <button class="btn btn-sm btn-success btn-update-row" title="Update">
+                <button class="btn btn-sm btn-success btn-update-row me-3" title="Update">
                     <i class="bi bi-arrow-repeat"></i>
                 </button>
                 <button class="btn btn-sm btn-danger btn-delete-row" title="Delete">

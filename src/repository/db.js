@@ -2,8 +2,9 @@ import { initializeApp } from 'firebase/app';
 import { getAuth, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { initializeAppCheck, ReCaptchaEnterpriseProvider } from 'firebase/app-check';
 import { getFirestore, query, collection, doc, getDocs, orderBy, addDoc, updateDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { formatFirestoreTimestamp } from "../util/time.js";
+import {formatBytes} from "../util/file.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyCl2v8Fy8hPzodHbTzj9dLO8Nz8_sjbet8",
@@ -128,6 +129,18 @@ export async function deleteTextItem(itemId) {
  * @property {string} updatedAt - when upload file
  * */
 
+
+export async function getAllFileItems() {
+    const q = query(collection(db, "file_items"), orderBy("updatedAt", "desc"));
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        size: formatBytes(doc.data().size),
+        updatedAt: formatFirestoreTimestamp(doc.data().updatedAt),
+    }));
+}
+
 /**
  * @param {FileItem} fileItem
 * */
@@ -151,5 +164,20 @@ export async function uploadFile(file) {
         updatedAt: serverTimestamp()
     })
 }
+
+
+/**
+ * @param {string} itemId
+ * @param {string} path
+* */
+export async function deleteFileItem(itemId, path) {
+    const fileRef = ref(storage, path);
+    await deleteObject(fileRef);
+
+    const docRef = doc(db, "file_items", itemId);
+    await deleteDoc(docRef);
+}
+
+
 
 export { auth }
