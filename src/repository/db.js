@@ -2,6 +2,7 @@ import { initializeApp } from 'firebase/app';
 import { getAuth, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { initializeAppCheck, ReCaptchaEnterpriseProvider } from 'firebase/app-check';
 import { getFirestore, query, collection, doc, getDocs, orderBy, addDoc, updateDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { formatFirestoreTimestamp } from "../util/time.js";
 
 const firebaseConfig = {
@@ -22,7 +23,7 @@ const appCheck = initializeAppCheck(app, {
 })
 const auth = getAuth(app);
 const db = getFirestore(app, "transfer-app");
-
+const storage = getStorage(app, "gs://transfer-app-72e93.firebasestorage.app");
 
 function formatAuthError(errorCode) {
     switch (errorCode) {
@@ -110,9 +111,45 @@ export async function updateTextItem(itemId, value) {
     });
 }
 
+/**
+ * @param {string} itemId
+ * */
 export async function deleteTextItem(itemId) {
     const docRef = doc(db, "text_items", itemId);
     await deleteDoc(docRef);
+}
+
+/**
+ * @typedef {Object} FileItem
+ * @property {string} name
+ * @property {string} size
+ * @property {string} url
+ * @property {string} path
+ * @property {string} updatedAt - when upload file
+ * */
+
+/**
+ * @param {FileItem} fileItem
+* */
+async function addFileItem(fileItem) {
+    const { name, size, url, path, updatedAt = serverTimestamp()} = fileItem;
+    await addDoc(collection(db, "file_items"), {name, size, url, updatedAt, path});
+}
+
+/**
+ * @param {File} file
+ * */
+export async function uploadFile(file) {
+    const storageRef = ref(storage, `fileItems/${Date.now()}_${file.name}`);
+    const snapshot = await uploadBytes(storageRef, file);
+    const downloadUrl = await getDownloadURL(snapshot.ref);
+    return await addFileItem({
+        name: file.name,
+        size: file.size,
+        url: downloadUrl,
+        path: snapshot.ref.fullPath,
+        updatedAt: serverTimestamp()
+    })
 }
 
 export { auth }

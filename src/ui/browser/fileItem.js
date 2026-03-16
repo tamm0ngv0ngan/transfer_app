@@ -1,3 +1,4 @@
+import {uploadFile} from "../../repository/db.js";
 
 /**
  * @param {boolean} isLoading
@@ -36,8 +37,8 @@ export function renderFileTable(container) {
             <thead class="table-light">
             <tr>
                 <th scope="col" style="width: 5%">No.</th>
-                <th scope="col" style="width: 20%">Key</th>
-                <th scope="col" style="width: 40%">Value</th>
+                <th scope="col" style="width: 45%">Name</th>
+                <th scope="col" style="width: 15%">Size</th>
                 <th scope="col" style="width: 20%">Updated At</th>
                 <th scope="col" style="width: 15%" class="text-center">Action</th>
             </tr>
@@ -69,7 +70,7 @@ export function renderFileTable(container) {
         }
         try {
             setFileCardLoading(true);
-            await new Promise(resolve => setTimeout(resolve, 5000));
+            await uploadFile(file);
             setFileCardLoading(false);
         } catch (error) {
             alert("Upload failed: " + error.message);
