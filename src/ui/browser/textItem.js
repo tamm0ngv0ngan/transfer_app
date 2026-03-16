@@ -161,7 +161,7 @@ export function renderItemTable(container) {
     </div>
     <div class="d-flex justify-content-end gap-2 mt-3">
         <button id="btn-add-text-id" class="btn btn-primary btn-add">
-            <i class="bi bi-plus-circle"></i> Add New
+            <i class="bi bi-plus-circle"></i> Add New Text
         </button>
     </div>
 </div>
