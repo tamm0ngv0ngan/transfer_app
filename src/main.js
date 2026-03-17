@@ -1,4 +1,4 @@
-import { isTMA } from "@telegram-apps/sdk";
+import { isTMA } from "@tma.js/sdk";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'bootstrap-icons/font/bootstrap-icons.css'
