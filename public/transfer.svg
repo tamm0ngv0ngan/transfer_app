@@ -1,0 +1,294 @@
+<svg width="1200" height="700" viewBox="0 0 1200 700" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+    <title id="title">Hero illustration for device to device data transfer</title>
+    <desc id="desc">A smartphone sending data to a laptop with animated data particles and a secure cloud in the center.</desc>
+
+    <defs>
+        <linearGradient id="bgGlow1" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#7C3AED"/>
+            <stop offset="100%" stop-color="#06B6D4"/>
+        </linearGradient>
+
+        <linearGradient id="bgGlow2" x1="1" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#22C55E"/>
+            <stop offset="100%" stop-color="#3B82F6"/>
+        </linearGradient>
+
+        <linearGradient id="deviceStroke" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#A78BFA"/>
+            <stop offset="100%" stop-color="#22D3EE"/>
+        </linearGradient>
+
+        <linearGradient id="flowGradient" x1="240" y1="350" x2="960" y2="350">
+            <stop offset="0%" stop-color="#8B5CF6"/>
+            <stop offset="50%" stop-color="#06B6D4"/>
+            <stop offset="100%" stop-color="#22C55E"/>
+        </linearGradient>
+
+        <linearGradient id="screenFill" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#0F172A"/>
+            <stop offset="100%" stop-color="#111827"/>
+        </linearGradient>
+
+        <radialGradient id="centerGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(600 345) rotate(90) scale(180 180)">
+            <stop offset="0%" stop-color="#22D3EE" stop-opacity="0.45"/>
+            <stop offset="100%" stop-color="#22D3EE" stop-opacity="0"/>
+        </radialGradient>
+
+        <filter id="blurXL" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="40"/>
+        </filter>
+
+        <filter id="shadowSoft" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="12" stdDeviation="20" flood-color="#0F172A" flood-opacity="0.25"/>
+        </filter>
+
+        <filter id="shadowCard" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="8" stdDeviation="14" flood-color="#0F172A" flood-opacity="0.18"/>
+        </filter>
+
+        <style>
+            .floatY {
+            animation: floatY 5s ease-in-out infinite;
+            transform-origin: center;
+            }
+
+            .floatY2 {
+            animation: floatY 6.5s ease-in-out infinite;
+            transform-origin: center;
+            }
+
+            .pulse {
+            animation: pulse 3s ease-in-out infinite;
+            transform-origin: center;
+            }
+
+            .dataDot1 {
+            animation: moveData1 3.8s linear infinite;
+            }
+
+            .dataDot2 {
+            animation: moveData2 4.6s linear infinite;
+            }
+
+            .dataDot3 {
+            animation: moveData3 5.2s linear infinite;
+            }
+
+            .dataDot4 {
+            animation: moveData4 4.2s linear infinite;
+            }
+
+            .signalRing {
+            animation: ringPulse 3.2s ease-out infinite;
+            transform-origin: center;
+            }
+
+            .signalRing2 {
+            animation: ringPulse 3.2s ease-out 1.1s infinite;
+            transform-origin: center;
+            }
+
+            .signalRing3 {
+            animation: ringPulse 3.2s ease-out 2.2s infinite;
+            transform-origin: center;
+            }
+
+            @keyframes floatY {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            }
+
+            @keyframes floatY2 {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(8px); }
+            }
+
+            @keyframes pulse {
+            0%, 100% { opacity: 0.75; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.04); }
+            }
+
+            @keyframes moveData1 {
+            0%   { transform: translate(0px, 0px); opacity: 0; }
+            10%  { opacity: 1; }
+            50%  { opacity: 1; }
+            100% { transform: translate(720px, 0px); opacity: 0; }
+            }
+
+            @keyframes moveData2 {
+            0%   { transform: translate(0px, 0px); opacity: 0; }
+            12%  { opacity: 1; }
+            55%  { opacity: 1; }
+            100% { transform: translate(720px, 0px); opacity: 0; }
+            }
+
+            @keyframes moveData3 {
+            0%   { transform: translate(0px, 0px); opacity: 0; }
+            8%   { opacity: 1; }
+            60%  { opacity: 1; }
+            100% { transform: translate(720px, 0px); opacity: 0; }
+            }
+
+            @keyframes moveData4 {
+            0%   { transform: translate(0px, 0px); opacity: 0; }
+            15%  { opacity: 1; }
+            58%  { opacity: 1; }
+            100% { transform: translate(720px, 0px); opacity: 0; }
+            }
+
+            @keyframes ringPulse {
+            0%   { opacity: 0; transform: scale(0.6); }
+            20%  { opacity: 0.35; }
+            100% { opacity: 0; transform: scale(1.6); }
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+            .floatY, .floatY2, .pulse, .dataDot1, .dataDot2, .dataDot3, .dataDot4, .signalRing, .signalRing2, .signalRing3 {
+            animation: none !important;
+            }
+            }
+        </style>
+    </defs>
+
+    <!-- Background -->
+    <rect width="1200" height="700" rx="32" fill="#F8FAFC"/>
+    <circle cx="240" cy="130" r="140" fill="url(#bgGlow1)" opacity="0.16" filter="url(#blurXL)"/>
+    <circle cx="1010" cy="530" r="170" fill="url(#bgGlow2)" opacity="0.14" filter="url(#blurXL)"/>
+    <circle cx="600" cy="345" r="180" fill="url(#centerGlow)" class="pulse"/>
+
+    <!-- Decorative grid dots -->
+    <g opacity="0.18">
+        <circle cx="110" cy="95" r="3" fill="#64748B"/>
+        <circle cx="145" cy="95" r="3" fill="#64748B"/>
+        <circle cx="180" cy="95" r="3" fill="#64748B"/>
+        <circle cx="110" cy="130" r="3" fill="#64748B"/>
+        <circle cx="145" cy="130" r="3" fill="#64748B"/>
+        <circle cx="180" cy="130" r="3" fill="#64748B"/>
+
+        <circle cx="1000" cy="120" r="3" fill="#64748B"/>
+        <circle cx="1035" cy="120" r="3" fill="#64748B"/>
+        <circle cx="1070" cy="120" r="3" fill="#64748B"/>
+        <circle cx="1000" cy="155" r="3" fill="#64748B"/>
+        <circle cx="1035" cy="155" r="3" fill="#64748B"/>
+        <circle cx="1070" cy="155" r="3" fill="#64748B"/>
+    </g>
+
+    <!-- Connection rings -->
+    <g>
+        <circle class="signalRing" cx="600" cy="345" r="54" stroke="#22D3EE" stroke-width="2" fill="none"/>
+        <circle class="signalRing2" cx="600" cy="345" r="54" stroke="#8B5CF6" stroke-width="2" fill="none"/>
+        <circle class="signalRing3" cx="600" cy="345" r="54" stroke="#22C55E" stroke-width="2" fill="none"/>
+    </g>
+
+    <!-- Main data path -->
+    <path d="M260 350 C390 280, 490 280, 600 345 C710 410, 810 410, 940 350"
+          stroke="url(#flowGradient)"
+          stroke-width="8"
+          stroke-linecap="round"
+          fill="none"
+          opacity="0.95"/>
+
+    <path d="M260 350 C390 280, 490 280, 600 345 C710 410, 810 410, 940 350"
+          stroke="url(#flowGradient)"
+          stroke-width="18"
+          stroke-linecap="round"
+          fill="none"
+          opacity="0.10"/>
+
+    <!-- Moving data particles -->
+    <g transform="translate(240 350)">
+        <circle class="dataDot1" cx="0" cy="0" r="8" fill="#8B5CF6"/>
+        <circle class="dataDot2" cx="0" cy="-18" r="6" fill="#06B6D4"/>
+        <circle class="dataDot3" cx="0" cy="16" r="7" fill="#22C55E"/>
+        <rect class="dataDot4" x="-7" y="-7" width="14" height="14" rx="4" fill="#38BDF8" transform="rotate(45)"/>
+    </g>
+
+    <!-- Smartphone -->
+    <g class="floatY" filter="url(#shadowSoft)">
+        <rect x="120" y="180" width="170" height="340" rx="34" fill="#FFFFFF"/>
+        <rect x="126" y="186" width="158" height="328" rx="30" fill="url(#screenFill)" stroke="url(#deviceStroke)" stroke-width="2.5"/>
+        <rect x="175" y="198" width="60" height="8" rx="4" fill="#334155"/>
+        <circle cx="205" cy="486" r="10" fill="#1E293B"/>
+
+        <!-- Phone UI -->
+        <rect x="146" y="230" width="118" height="92" rx="18" fill="#0F172A" stroke="#334155"/>
+        <rect x="158" y="244" width="94" height="12" rx="6" fill="#8B5CF6" opacity="0.9"/>
+        <rect x="158" y="265" width="70" height="10" rx="5" fill="#475569"/>
+        <rect x="158" y="283" width="55" height="10" rx="5" fill="#334155"/>
+
+        <rect x="146" y="345" width="118" height="52" rx="16" fill="#111827" stroke="#334155"/>
+        <path d="M170 371 L188 353 L205 371 L232 344" stroke="#22D3EE" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="233" cy="344" r="5" fill="#22D3EE"/>
+
+        <rect x="146" y="420" width="118" height="56" rx="16" fill="url(#bgGlow1)" opacity="0.22"/>
+        <path d="M168 448 H214" stroke="#E9D5FF" stroke-width="6" stroke-linecap="round"/>
+        <path d="M214 448 L202 436" stroke="#E9D5FF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M214 448 L202 460" stroke="#E9D5FF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="235" cy="448" r="12" fill="#A78BFA"/>
+    </g>
+
+    <!-- Center cloud / sync -->
+    <g class="floatY2" filter="url(#shadowCard)">
+        <rect x="525" y="255" width="150" height="180" rx="28" fill="#FFFFFF" opacity="0.96"/>
+        <path d="M565 338C565 317 582 300 603 300C617 300 629 307 635 319C638 318 642 317 646 317C661 317 673 329 673 344C673 359 661 371 646 371H569C551 371 537 357 537 339C537 322 551 308 568 308C572 308 576 309 579 310C585 297 599 288 615 288C638 288 656 306 656 329"
+              fill="#E0F2FE"/>
+        <path d="M602 394V345" stroke="#0F172A" stroke-width="6" stroke-linecap="round"/>
+        <path d="M602 345L587 360" stroke="#0F172A" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M602 345L617 360" stroke="#0F172A" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="602" cy="394" r="18" fill="#22C55E"/>
+        <path d="M594 394L600 400L611 389" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+
+    <!-- Laptop -->
+    <g class="floatY" filter="url(#shadowSoft)">
+        <rect x="820" y="185" width="250" height="168" rx="20" fill="#FFFFFF"/>
+        <rect x="832" y="197" width="226" height="144" rx="14" fill="url(#screenFill)" stroke="url(#deviceStroke)" stroke-width="2.5"/>
+
+        <!-- Laptop screen UI -->
+        <rect x="860" y="223" width="170" height="22" rx="11" fill="#111827" stroke="#334155"/>
+        <circle cx="877" cy="234" r="5" fill="#22C55E"/>
+        <circle cx="895" cy="234" r="5" fill="#F59E0B"/>
+        <circle cx="913" cy="234" r="5" fill="#EF4444"/>
+
+        <rect x="860" y="262" width="72" height="52" rx="14" fill="#0F172A" stroke="#334155"/>
+        <path d="M880 293L893 280L906 293L916 283" stroke="#8B5CF6" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+
+        <rect x="946" y="262" width="84" height="12" rx="6" fill="#22D3EE" opacity="0.9"/>
+        <rect x="946" y="283" width="64" height="10" rx="5" fill="#475569"/>
+        <rect x="946" y="301" width="52" height="10" rx="5" fill="#334155"/>
+
+        <rect x="860" y="325" width="170" height="14" rx="7" fill="#1E293B"/>
+        <rect x="860" y="325" width="120" height="14" rx="7" fill="url(#flowGradient)"/>
+
+        <path d="M790 360H1100L1078 390H812L790 360Z" fill="#CBD5E1"/>
+        <path d="M880 371H1010" stroke="#94A3B8" stroke-width="6" stroke-linecap="round"/>
+    </g>
+
+    <!-- Floating badges -->
+    <g class="floatY2" filter="url(#shadowCard)">
+        <rect x="320" y="120" width="160" height="56" rx="18" fill="#FFFFFF" opacity="0.96"/>
+        <circle cx="352" cy="148" r="14" fill="#DCFCE7"/>
+        <path d="M346 148L351 153L359 143" stroke="#16A34A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        <rect x="378" y="140" width="72" height="10" rx="5" fill="#0F172A"/>
+        <rect x="378" y="156" width="46" height="8" rx="4" fill="#64748B"/>
+    </g>
+
+    <g class="floatY" filter="url(#shadowCard)">
+        <rect x="910" y="470" width="178" height="60" rx="18" fill="#FFFFFF" opacity="0.96"/>
+        <rect x="934" y="488" width="24" height="24" rx="8" fill="#E0F2FE"/>
+        <path d="M942 500H950" stroke="#0284C7" stroke-width="4" stroke-linecap="round"/>
+        <path d="M946 496V504" stroke="#0284C7" stroke-width="4" stroke-linecap="round"/>
+        <rect x="972" y="488" width="80" height="10" rx="5" fill="#0F172A"/>
+        <rect x="972" y="504" width="52" height="8" rx="4" fill="#64748B"/>
+    </g>
+
+    <!-- Tiny ambient particles -->
+    <g opacity="0.55">
+        <circle cx="382" cy="460" r="5" fill="#8B5CF6"/>
+        <circle cx="418" cy="500" r="4" fill="#22D3EE"/>
+        <circle cx="770" cy="190" r="5" fill="#22C55E"/>
+        <circle cx="735" cy="480" r="4" fill="#38BDF8"/>
+        <circle cx="690" cy="225" r="3.5" fill="#A78BFA"/>
+        <circle cx="510" cy="510" r="4" fill="#22D3EE"/>
+    </g>
+</svg>
