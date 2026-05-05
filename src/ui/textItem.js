@@ -53,7 +53,7 @@ function setupAddTextModal() {
             </div>
             <div class="mb-3">
               <label for="newTextValueInput" class="form-label">Value</label>
-              <input type="text" class="form-control" id="newTextValueInput" placeholder="Enter Value...">
+              <textarea id="newTextValueInput" class="form-control item-value" style="resize: none; overflow: hidden; min-height: 38px;" placeholder="Enter Value..." rows="1"></textarea>
             </div>
           </div>
           <div class="modal-footer">
@@ -186,7 +186,9 @@ export async function loadTextItems() {
         <tr data-item-id="${item.id}">
             <td>${index + 1}</td>
             <td>${item.key}</td>
-            <td><input type="text" class="form-control item-value" value="${item.value}" /></td>
+            <td>
+                <textarea class="form-control item-value" style="resize: none; overflow: hidden; min-height: 38px;" rows="1">${item.value}</textarea>
+            </td>
             <td>${item.updatedAt}</td>
             <td class="text-center">
                 <button class="btn btn-sm btn-success btn-update-row me-3" title="Update">
@@ -203,5 +205,11 @@ export async function loadTextItems() {
     const existingRows = bodyContainer.querySelectorAll('tr');
     existingRows.forEach(existingRow => {
         attachRowListeners(existingRow);
+
+        const textarea = existingRow.querySelector('.item-value');
+        if (textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = textarea.scrollHeight + 'px';
+        }
     });
 }
