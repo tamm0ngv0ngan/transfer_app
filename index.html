@@ -7,7 +7,12 @@
     <link rel="icon" type="image/image+xml" href="/icon.svg" />
   </head>
   <body>
-    <div id="app" class="container py-4 mt-5"></div>
+    <div id="app" class="container py-4 mt-5">
+      <div id="initial-loader" class="d-flex flex-column justify-content-center align-items-center"
+           style="min-height: 50vh;">
+        <img src="/transfer.svg" alt="Loading..." style="min-width: 400px; height: auto;" class="mb-3"/>
+      </div>
+    </div>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>
