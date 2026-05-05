@@ -1,4 +1,4 @@
-import {deleteFileItem, getAllFileItems, uploadFile} from "../../repository/db.js";
+import {deleteFileItem, getAllFileItems, uploadFile} from "../repository/db.js";
 
 /**
  * @param {boolean} isLoading
@@ -81,7 +81,6 @@ export function renderFileTable(container) {
 </div>
 <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
     <h5 class="mb-0">File Manager</h5>
-    <span class="badge bg-secondary">Environment: ${container.getAttribute('data-environment')}</span>
 </div>
 <div class="card-body">
     <div class="table-responsive">

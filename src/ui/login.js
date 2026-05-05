@@ -1,4 +1,4 @@
-import {login} from "../../repository/db.js";
+import {login} from "../repository/db.js";
 
 
 /**

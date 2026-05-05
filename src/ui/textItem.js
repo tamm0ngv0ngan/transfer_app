@@ -1,6 +1,6 @@
 
 import * as bootstrap from "bootstrap";
-import {addTextItem, deleteTextItem, getAllTextItems, updateTextItem} from "../../repository/db.js";
+import {addTextItem, deleteTextItem, getAllTextItems, updateTextItem} from "../repository/db.js";
 
 
 async function handleConfirmTextAdd() {
@@ -136,7 +136,6 @@ export function renderItemTable(container) {
     textContainer.innerHTML = `
 <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
     <h5 class="mb-0">Text Items</h5>
-    <span class="badge bg-secondary">Environment: ${container.getAttribute('data-environment')}</span>
 </div>
 <div class="card-body">
     <div class="table-responsive">

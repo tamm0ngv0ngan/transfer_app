@@ -1,4 +1,4 @@
-import { logout } from "../../repository/db.js";
+import { logout } from "../repository/db.js";
 
 
 /**
