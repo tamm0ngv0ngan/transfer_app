@@ -74,6 +74,7 @@ function setupAddTextModal() {
  */
 function attachRowListeners(rowElement) {
     const updateBtn = rowElement.querySelector('.btn-update-row');
+    const copyBtn = rowElement.querySelector('.btn-copy-row');
     const deleteBtn = rowElement.querySelector('.btn-delete-row');
 
     const itemId = rowElement.getAttribute('data-item-id');
@@ -96,6 +97,23 @@ function attachRowListeners(rowElement) {
             updateBtn.disabled = false;
             updateBtn.innerHTML = '<i class="bi bi-arrow-repeat"></i>';
         }
+    })
+
+    const textarea = rowElement.querySelector('.item-value');
+
+    copyBtn.addEventListener('click', () => {
+        const value = textarea.value;
+        navigator.clipboard.writeText(value).then(() => {
+            const originalHtml = copyBtn.innerHTML;
+            copyBtn.innerHTML = '<i class="bi bi-check-lg"></i>';
+            copyBtn.classList.remove('btn-info');
+            copyBtn.classList.add('btn-success');
+            setTimeout(() => {
+                copyBtn.innerHTML = originalHtml;
+                copyBtn.classList.remove('btn-success');
+                copyBtn.classList.add('btn-info');
+            }, 1500);
+        });
     })
 
     deleteBtn.addEventListener('click', async () => {
@@ -191,8 +209,11 @@ export async function loadTextItems() {
             </td>
             <td>${item.updatedAt}</td>
             <td class="text-center">
-                <button class="btn btn-sm btn-success btn-update-row me-3" title="Update">
+                <button class="btn btn-sm btn-success btn-update-row me-2" title="Update">
                     <i class="bi bi-arrow-repeat"></i>
+                </button>
+                <button class="btn btn-sm btn-info btn-copy-row me-2" title="Copy">
+                    <i class="bi bi-copy"></i>
                 </button>
                 <button class="btn btn-sm btn-danger btn-delete-row" title="Delete">
                     <i class="bi bi-trash"></i>
