@@ -19,6 +19,7 @@ function setFileCardLoading(isLoading) {
  */
 function attachRowListeners(rowElement) {
     const downloadBtn = rowElement.querySelector('.btn-download-file');
+    const copyUrlBtn = rowElement.querySelector('.btn-copy-url');
     const deleteBtn = rowElement.querySelector('.btn-delete-file');
 
     downloadBtn.addEventListener("click", async () => {
@@ -45,6 +46,21 @@ function attachRowListeners(rowElement) {
             downloadBtn.disabled = false;
             downloadBtn.innerHTML = '<i class="bi bi-download"></i>';
         }
+    });
+
+    copyUrlBtn.addEventListener("click", async () => {
+        const url = copyUrlBtn.getAttribute("data-url");
+        navigator.clipboard.writeText(url).then(() => {
+            const originalHtml = copyUrlBtn.innerHTML;
+            copyUrlBtn.innerHTML = '<i class="bi bi-check-lg"></i>';
+            copyUrlBtn.classList.remove('btn-info');
+            copyUrlBtn.classList.add('btn-success');
+            setTimeout(() => {
+                copyUrlBtn.innerHTML = originalHtml;
+                copyUrlBtn.classList.remove('btn-success');
+                copyUrlBtn.classList.add('btn-info');
+            }, 1500);
+        });
     });
 
     deleteBtn.addEventListener("click", async () => {
@@ -142,9 +158,13 @@ export async function loadFileItems() {
             <td>${item.size}</td>
             <td>${item.updatedAt}</td>
             <td class="text-center">
-                <button class="btn btn-sm btn-primary btn-download-file me-3" 
+                <button class="btn btn-sm btn-primary btn-download-file me-2" 
                         data-url="${item.url}" data-name="${item.name}">
                     <i class="bi bi-download"></i>
+                </button>
+                <button class="btn btn-sm btn-info btn-copy-url me-2" title="Copy"
+                        data-url="${item.url}">
+                    <i class="bi bi-copy"></i>
                 </button>
                 <button class="btn btn-sm btn-danger btn-delete-file"
                         data-id="${item.id}" data-path="${item.path}">
