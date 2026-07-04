@@ -2,6 +2,6 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-    base: '/transfer_app/',
+    base: './',
     plugins: []
 });
