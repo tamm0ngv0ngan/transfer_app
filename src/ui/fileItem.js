@@ -150,11 +150,12 @@ export function renderFileTable(container) {
 export async function loadFileItems() {
     const bodyContainer = document.getElementById('tbody-file-id');
     const fileItems = await getAllFileItems();
+    // Keep the row number unchanged and show --- for items without an item number.
     bodyContainer.innerHTML = `
     ${fileItems.map((item, index) => `
         <tr data-item-id="${item.id}">
             <td>${index + 1}</td>
-            <td>${item.name}</td>
+            <td>${item.name} (id: ${item.itemNumber ?? '---'})</td>
             <td>${item.size}</td>
             <td>${item.updatedAt}</td>
             <td class="text-center">

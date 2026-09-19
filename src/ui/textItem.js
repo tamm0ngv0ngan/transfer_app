@@ -199,11 +199,12 @@ export function renderItemTable(container) {
 export async function loadTextItems() {
     const bodyContainer = document.getElementById('tbody-text-id');
     const textItems = await getAllTextItems();
+    // Keep the row number unchanged and show --- for items without an item number.
     bodyContainer.innerHTML = `
     ${textItems.map((item, index) => `
         <tr data-item-id="${item.id}">
             <td>${index + 1}</td>
-            <td>${item.key}</td>
+            <td>${item.key} (id: ${item.itemNumber ?? '---'})</td>
             <td>
                 <textarea class="form-control item-value" style="resize: none; overflow: hidden; min-height: 38px;" rows="1">${item.value}</textarea>
             </td>

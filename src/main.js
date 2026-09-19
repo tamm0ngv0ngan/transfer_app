@@ -4,7 +4,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css'
 import './css/main.css'
 
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from './repository/db.js'
+import { auth, loadItemNumbers } from './repository/db.js'
 import {renderItemTable, loadTextItems} from "./ui/textItem.js";
 import { renderLoginForm } from "./ui/login.js";
 import { renderLogoutForm } from "./ui/logout.js";
@@ -17,6 +17,13 @@ async function initApp() {
         if (user) {
             container.innerHTML = '';
             renderLogoutForm(container);
+            // Reloading the page starts a fresh server read, including restored sessions.
+            try {
+                await loadItemNumbers();
+            } catch (error) {
+                alert('Could not load item numbers. Adding items requires a page reload: ' + error.message);
+            }
+            if (auth.currentUser?.uid !== user.uid) return;
             renderItemTable(container);
             renderFileTable(container)
             await loadTextItems();
