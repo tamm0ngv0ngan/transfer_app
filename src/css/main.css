@@ -393,6 +393,10 @@ body {
     font-size: 14px;
 }
 
+.initial-loader.loading-error p {
+    color: #ba3747;
+}
+
 /* Loading overlays preserve the existing active-class behavior. */
 
 .modal-loading-overlay, .card-loading-overlay {
