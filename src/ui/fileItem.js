@@ -87,7 +87,7 @@ function attachRowListeners(rowElement) {
  */
 export function renderFileTable(container) {
     const fileContainer = document.createElement('div');
-    fileContainer.className = 'card mb-4 shadow-sm card-relative';
+    fileContainer.className = 'card workspace-card file-card card-relative';
     fileContainer.id = 'fileManagerCard';
 
     fileContainer.innerHTML = `
@@ -95,19 +95,22 @@ export function renderFileTable(container) {
     <div class="spinner-border text-primary" role="status"></div>
     <div class="mt-2 fw-bold">Uploading File...</div>
 </div>
-<div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-    <h5 class="mb-0">File Manager</h5>
+<!-- Responsive section headers keep the existing action IDs and handlers. -->
+<div class="card-header section-header">
+    <div class="section-title"><span class="section-icon" aria-hidden="true"><i class="bi bi-folder2"></i></span><div><h2>File items</h2><p>A simple home for the files you share.</p></div></div>
+    <input type="file" id="fileInput" class="d-none">
+    <button class="btn btn-primary btn-add" onclick="document.getElementById('fileInput').click()"><i class="bi bi-upload" aria-hidden="true"></i> Upload file</button>
 </div>
 <div class="card-body">
     <div class="table-responsive">
-        <table class="table table-bordered table-hover align-middle" style="table-layout: fixed;">
-            <thead class="table-light">
+        <table class="table item-table align-middle" aria-label="File items">
+            <thead>
             <tr>
-                <th scope="col" style="width: 5%">No.</th>
-                <th scope="col" style="width: 45%">Name</th>
-                <th scope="col" style="width: 15%">Size</th>
-                <th scope="col" style="width: 20%">Updated At</th>
-                <th scope="col" style="width: 15%" class="text-center">Action</th>
+                <th scope="col">No.</th>
+                <th scope="col">Name</th>
+                <th scope="col">Size</th>
+                <th scope="col">Updated</th>
+                <th scope="col" class="text-center">Actions</th>
             </tr>
             </thead>
             <tbody id="tbody-file-id">
@@ -119,12 +122,7 @@ export function renderFileTable(container) {
             </tbody>
         </table>
     </div>
-    <div class="d-flex justify-content-end gap-2 mt-3">
-        <input type="file" id="fileInput" class="d-none">
-        <button class="btn btn-primary btn-add" onclick="document.getElementById('fileInput').click()">
-            <i class="bi bi-plus-circle"></i> Upload New File
-        </button>
-    </div>
+
 </div>
     `;
     container.appendChild(fileContainer);
@@ -154,24 +152,24 @@ export async function loadFileItems() {
     bodyContainer.innerHTML = `
     ${fileItems.map((item, index) => `
         <tr data-item-id="${item.id}">
-            <td>${index + 1}</td>
-            <td>${item.name} (id: ${item.itemNumber ?? '---'})</td>
-            <td>${item.size}</td>
-            <td>${item.updatedAt}</td>
-            <td class="text-center">
-                <button class="btn btn-sm btn-primary btn-download-file me-2" 
+            <td class="number-cell" data-label="No.">${index + 1}</td>
+            <td class="name-cell" data-label="Name">${item.name} <span class="item-id">(id: ${item.itemNumber ?? '---'})</span></td>
+            <td class="size-cell" data-label="Size">${item.size}</td>
+            <td class="updated-cell" data-label="Updated">${item.updatedAt}</td>
+            <td class="actions-cell" data-label="Actions"><div class="row-actions">
+                <button class="btn btn-sm btn-primary btn-download-file" title="Download file" aria-label="Download file"
                         data-url="${item.url}" data-name="${item.name}">
                     <i class="bi bi-download"></i>
                 </button>
-                <button class="btn btn-sm btn-info btn-copy-url me-2" title="Copy"
+                <button class="btn btn-sm btn-info btn-copy-url" title="Copy download link" aria-label="Copy download link"
                         data-url="${item.url}">
                     <i class="bi bi-copy"></i>
                 </button>
-                <button class="btn btn-sm btn-danger btn-delete-file"
+                <button class="btn btn-sm btn-danger btn-delete-file" title="Delete file" aria-label="Delete file"
                         data-id="${item.id}" data-path="${item.path}">
                         <i class="bi bi-trash"></i>
                 </button>
-            </td>
+            </div></td>
         </tr>
         `).join(' ')}
     `;

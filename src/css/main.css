@@ -1,21 +1,422 @@
-.modal-loading-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1060;
-    border-radius: calc(0.5rem - 1px);
-    visibility: hidden;
-    opacity: 0;
-    transition: opacity 0.2s ease-in-out;
+/* Shared visual tokens keep Bootstrap components consistent with the workspace. */
+
+:root {
+    --workspace-ink: #172a3a;
+    --workspace-muted: #6b7a89;
+    --workspace-line: #e5eaf0;
+    --workspace-accent: #245edb;
 }
 
-.modal-loading-overlay.active {
+body {
+    margin: 0;
+    background: #f5f7fa;
+    color: var(--workspace-ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* A fluid shell gives the Value column more room on wide desktop displays. */
+
+.app-shell {
+    width: min(100% - 96px, 1760px);
+    margin: 0 auto;
+    padding: 44px 0 64px;
+}
+
+.workspace-header, .workspace-brand, .section-header, .section-title {
+    display: flex;
+    align-items: center;
+}
+
+.workspace-header {
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 36px;
+}
+
+.workspace-brand {
+    gap: 14px;
+}
+
+.brand-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    flex: 0 0 auto;
+    border-radius: 14px;
+    background: var(--workspace-ink);
+    color: white;
+    font-size: 22px;
+}
+
+.workspace-header h1 {
+    font-size: 25px;
+    font-weight: 700;
+    letter-spacing: -.8px;
+    margin: 0 0 3px;
+}
+
+.workspace-header p, .section-title p {
+    margin: 0;
+    color: var(--workspace-muted);
+    font-size: 13px;
+}
+
+.btn {
+    min-height: 42px;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 9px 14px;
+}
+
+.btn-primary {
+    --bs-btn-bg: #245edb;
+    --bs-btn-border-color: #245edb;
+    --bs-btn-hover-bg: #194fc2;
+    --bs-btn-hover-border-color: #194fc2;
+}
+
+.btn-outline-secondary {
+    --bs-btn-color: #506172;
+    --bs-btn-border-color: #d8e0e9;
+    --bs-btn-hover-bg: #e8edf4;
+    --bs-btn-hover-color: #172a3a;
+    --bs-btn-hover-border-color: #cbd6e2;
+    background: white;
+}
+
+.btn:focus-visible, .form-control:focus {
+    box-shadow: 0 0 0 3px #245edb26;
+    border-color: #245edb;
+}
+
+.workspace-card {
+    border: 1px solid var(--workspace-line);
+    border-radius: 16px;
+    box-shadow: 0 3px 14px #172a3a03;
+    margin-bottom: 26px;
+    overflow: hidden;
+}
+
+.section-header {
+    background: white;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 23px 26px;
+    border-bottom: 1px solid var(--workspace-line);
+}
+
+.section-title {
+    gap: 12px;
+    min-width: 0;
+}
+
+.section-title h2 {
+    font-size: 17px;
+    font-weight: 650;
+    letter-spacing: -.3px;
+    margin: 0 0 4px;
+}
+
+.section-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 11px;
+    background: #edf3ff;
+    color: #245edb;
+    font-size: 21px;
+    flex-shrink: 0;
+}
+
+.file-card .section-icon {
+    color: #1c806f;
+    background: #eaf6f2;
+}
+
+.btn-add {
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.workspace-card > .card-body {
+    padding: 0;
+}
+
+.item-table {
+    table-layout: fixed;
+    width: 100%;
+    margin: 0;
+    font-size: 14px;
+    --bs-table-color: var(--workspace-ink);
+    --bs-table-border-color: var(--workspace-line);
+}
+
+.item-table th {
+    background: #fafbfd;
+    color: var(--workspace-muted);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .7px;
+    text-transform: uppercase;
+    padding: 14px 18px;
+    border-bottom-width: 1px;
+}
+
+.item-table td {
+    padding: 20px 18px;
+    overflow-wrap: anywhere;
+}
+
+.item-table th:first-child, .item-table td:first-child {
+    padding-left: 26px;
+}
+
+.item-table th:last-child, .item-table td:last-child {
+    padding-right: 26px;
+}
+
+.item-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.item-table th:nth-child(1) {
+    width: 64px;
+    white-space: nowrap;
+}
+
+.text-card th:nth-child(2) {
+    width: 18%;
+}
+
+.text-card th:nth-child(4), .file-card th:nth-child(4) {
+    width: 180px;
+}
+
+.item-table th:last-child {
+    width: 184px;
+}
+
+.file-card th:nth-child(3) {
+    width: 120px;
+}
+
+.number-cell, .updated-cell, .size-cell {
+    color: var(--workspace-muted) !important;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+}
+
+.name-cell {
+    font-weight: 600;
+}
+
+.item-id {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    color: #667b94;
+    background: #f0f4f8;
+    border-radius: 5px;
+    padding: 2px 5px;
+    margin-left: 3px;
+    white-space: nowrap;
+}
+
+.form-control {
+    border-color: #dfe5ed;
+    border-radius: 8px;
+    padding: 11px 12px;
+    font-size: 14px;
+    color: var(--workspace-ink);
+}
+
+.item-value {
+    min-height: 48px;
+    max-height: 340px;
+    line-height: 1.6;
+    resize: vertical;
+    overflow: auto;
+    background: #fcfdff;
+}
+
+.row-actions {
+    display: flex;
+    justify-content: center;
+    gap: 7px;
+}
+
+.row-actions .btn {
+    width: 40px;
+    min-height: 40px;
+    flex-shrink: 0;
+    padding: 0;
+    border: 1px solid #e3e9f1;
+    background: white;
+    color: #607187;
+    font-size: 16px;
+}
+
+.row-actions .btn:hover {
+    background: #edf3ff;
+    color: #245edb;
+    border-color: #b8cdf7;
+}
+
+.row-actions .btn-danger:hover {
+    color: #ba3747;
+    background: #fff1f3;
+    border-color: #f5c6ce;
+}
+
+.row-actions .btn-copy-row.btn-success, .row-actions .btn-copy-url.btn-success {
+    color: #21806a;
+    background: #eaf6f2;
+}
+
+/* Empty collections remain purely presentational and do not add synthetic data rows. */
+
+.item-table tbody:not(:has(tr))::after {
+    content: "Nothing here yet. Add your first item to get started.";
+    display: block;
+    padding: 28px;
+    color: var(--workspace-muted);
+    font-size: 13px;
+    width: max-content;
+    max-width: 100%;
+}
+
+.modal-content {
+    border: 0;
+    border-radius: 16px;
+    box-shadow: 0 24px 80px #172a3a24;
+    overflow: hidden;
+}
+
+.modal-header, .modal-body, .modal-footer {
+    padding: 20px 24px;
+}
+
+.modal-header, .modal-footer {
+    border-color: var(--workspace-line);
+}
+
+.modal-title {
+    font-size: 18px;
+    font-weight: 650;
+}
+
+.form-label {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+#newTextValueInput {
+    min-height: 140px;
+}
+
+.login-layout {
+    min-height: calc(100svh - 108px);
+    display: grid;
+    place-items: center;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 430px;
+    border: 1px solid var(--workspace-line);
+    border-radius: 20px;
+    box-shadow: 0 15px 60px #172a3a07;
+}
+
+.login-card .card-body {
+    padding: 38px;
+}
+
+.login-brand {
+    font-size: 10px;
+    letter-spacing: 2px;
+    font-weight: 700;
+    color: var(--workspace-muted);
+    margin: 20px 0 8px;
+}
+
+.login-card h1 {
+    font-size: 29px;
+    letter-spacing: -1px;
+    font-weight: 700;
+}
+
+.login-description {
+    color: var(--workspace-muted);
+    font-size: 14px;
+    margin-bottom: 28px;
+}
+
+.login-card .btn {
+    margin-top: 8px;
+}
+
+.initial-loader {
+    min-height: calc(100svh - 108px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.loading-illustration {
+    display: block;
+    width: min(320px, 80%);
+    height: auto;
+}
+
+.initial-loader h1 {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -.8px;
+    margin: 24px 0 8px;
+}
+
+.initial-loader p {
+    color: var(--workspace-muted);
+    font-size: 14px;
+}
+
+/* Loading overlays preserve the existing active-class behavior. */
+
+.modal-loading-overlay, .card-loading-overlay {
+    position: absolute;
+    inset: 0;
+    background: #ffffffeb;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity .2s ease;
+}
+
+.modal-loading-overlay {
+    z-index: 1060;
+}
+
+.card-loading-overlay {
+    z-index: 10;
+}
+
+.modal-loading-overlay.active, .card-loading-overlay.active {
     visibility: visible;
     opacity: 1;
 }
@@ -25,24 +426,208 @@
     overflow: hidden;
 }
 
-.card-loading-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.8);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    z-index: 10;
-    visibility: hidden;
-    opacity: 0;
-    transition: opacity 0.3s ease-in-out;
+@media (max-width: 1199px) {
+    .app-shell {
+        width: calc(100% - 48px);
+    }
+    .text-card th:nth-child(2) {
+        width: 17%;
+    }
+    .text-card th:nth-child(4), .file-card th:nth-child(4) {
+        width: 145px;
+    }
+    .item-table th:last-child {
+        width: 170px;
+    }
+    .item-table td, .item-table th {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
 }
 
-.card-loading-overlay.active {
-    visibility: visible;
-    opacity: 1;
+/* Reflow the same table rows into labeled cards; all inputs and handlers are retained. */
+
+@media (max-width: 767px) {
+    .app-shell {
+        width: 100%;
+        padding: 24px 16px max(32px, env(safe-area-inset-bottom));
+    }
+    .workspace-header {
+        align-items: flex-start;
+        margin-bottom: 26px;
+    }
+    .workspace-brand {
+        gap: 10px;
+    }
+    .workspace-header h1 {
+        font-size: 23px;
+    }
+    .workspace-header p {
+        max-width: 180px;
+        font-size: 12px;
+    }
+    .brand-mark {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        font-size: 20px;
+    }
+    .logout-button {
+        padding: 9px 10px;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+    .workspace-card {
+        border-radius: 14px;
+        margin-bottom: 20px;
+    }
+    .section-header {
+        padding: 18px 16px;
+        align-items: flex-start;
+    }
+    .section-title {
+        gap: 8px;
+    }
+    .section-title h2 {
+        font-size: 16px;
+        margin-top: 3px;
+    }
+    .section-title p {
+        display: none;
+    }
+    .section-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        font-size: 18px;
+    }
+    .btn-add {
+        min-height: 36px;
+        font-size: 12px;
+        padding: 7px 10px;
+    }
+    .table-responsive {
+        overflow: visible;
+    }
+    .item-table, .item-table tbody {
+        display: block;
+        width: 100%;
+    }
+    .item-table thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+    }
+    .item-table tbody tr {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 14px 12px;
+        padding: 18px 16px;
+        border-bottom: 1px solid var(--workspace-line);
+    }
+    .item-table tbody tr:last-child {
+        border-bottom: 0;
+    }
+    .item-table td, .item-table td:first-child, .item-table td:last-child {
+        display: block;
+        padding: 0;
+        border: 0;
+        box-shadow: none;
+        min-width: 0;
+    }
+    .item-table td::before {
+        content: attr(data-label);
+        display: block;
+        font-size: 10px;
+        line-height: 1.4;
+        letter-spacing: .7px;
+        text-transform: uppercase;
+        color: var(--workspace-muted);
+        font-weight: 500;
+        margin-bottom: 5px;
+    }
+    .number-cell {
+        grid-column: 2;
+        grid-row: 1;
+        text-align: right;
+    }
+    .name-cell {
+        grid-column: 1;
+        grid-row: 1;
+        font-size: 14px;
+    }
+    .value-cell {
+        grid-column: 1 / -1;
+    }
+    .updated-cell {
+        align-self: center;
+        font-size: 11px;
+    }
+    .actions-cell {
+        align-self: end;
+    }
+    .actions-cell::before {
+        text-align: right;
+    }
+    .row-actions {
+        justify-content: flex-end;
+        gap: 6px;
+    }
+    .row-actions .btn {
+        width: 44px;
+        min-height: 44px;
+    }
+    .file-card .name-cell {
+        grid-column: 1;
+    }
+    .file-card .size-cell {
+        grid-column: 1;
+    }
+    .file-card .updated-cell {
+        grid-column: 1;
+    }
+    .file-card .actions-cell {
+        grid-column: 2;
+        grid-row: 2 / 4;
+    }
+    .item-value, .form-control {
+        font-size: 16px;
+    }
+    .item-value {
+        min-height: 88px;
+        max-height: 300px;
+    }
+    .item-table td[colspan] {
+        grid-column: 1 / -1;
+        padding: 14px 0;
+    }
+    .item-table td[colspan]::before {
+        display: none;
+    }
+    .item-table tbody:not(:has(tr))::after {
+        width: auto;
+        padding: 24px 16px;
+    }
+    .modal-dialog {
+        margin: 16px;
+    }
+    .modal-header, .modal-body, .modal-footer {
+        padding: 18px;
+    }
+    .login-card .card-body {
+        padding: 28px;
+    }
+    .login-layout, .initial-loader {
+        min-height: calc(100svh - 72px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        scroll-behavior: auto !important;
+        transition: none !important;
+        animation: none !important;
+    }
 }

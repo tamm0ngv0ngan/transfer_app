@@ -33,7 +33,7 @@ function setupAddTextModal() {
         return;
     }
     const modalHtml = `
-    <div class="modal fade" id="addTextModal" tabindex="-1" aria-hidden="true">
+    <div class="modal fade" id="addTextModal" tabindex="-1" aria-labelledby="addTextTitle" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div id="textModalOverlay" class="modal-loading-overlay">
@@ -43,7 +43,7 @@ function setupAddTextModal() {
             </div>
           </div>
           <div class="modal-header">
-            <h5 class="modal-title">Add New Item</h5>
+            <h5 class="modal-title" id="addTextTitle">Add text</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
@@ -53,7 +53,7 @@ function setupAddTextModal() {
             </div>
             <div class="mb-3">
               <label for="newTextValueInput" class="form-label">Value</label>
-              <textarea id="newTextValueInput" class="form-control item-value" style="resize: none; overflow: hidden; min-height: 38px;" placeholder="Enter Value..." rows="1"></textarea>
+              <textarea id="newTextValueInput" class="form-control item-value" placeholder="Enter Value..." rows="1"></textarea>
             </div>
           </div>
           <div class="modal-footer">
@@ -149,22 +149,24 @@ export function renderItemTable(container) {
     setupAddTextModal();
 
     const textContainer = document.createElement('div');
-    textContainer.className = 'card mb-4 shadow-sm';
+    textContainer.className = 'card workspace-card text-card';
 
     textContainer.innerHTML = `
-<div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-    <h5 class="mb-0">Text Items</h5>
+<!-- Responsive section headers keep the existing action IDs and handlers. -->
+<div class="card-header section-header">
+    <div class="section-title"><span class="section-icon" aria-hidden="true"><i class="bi bi-text-left"></i></span><div><h2>Text items</h2><p>Keep a thought. Copy it anywhere.</p></div></div>
+    <button id="btn-add-text-id" class="btn btn-primary btn-add"><i class="bi bi-plus-lg" aria-hidden="true"></i> Add text</button>
 </div>
 <div class="card-body">
     <div class="table-responsive">
-        <table class="table table-bordered table-hover align-middle" style="table-layout: fixed;">
-            <thead class="table-light">
+        <table class="table item-table align-middle" aria-label="Text items">
+            <thead>
             <tr>
-                <th scope="col" style="width: 5%">No.</th>
-                <th scope="col" style="width: 20%">Key</th>
-                <th scope="col" style="width: 40%">Value</th>
-                <th scope="col" style="width: 20%">Updated At</th>
-                <th scope="col" style="width: 15%" class="text-center">Action</th>
+                <th scope="col">No.</th>
+                <th scope="col">Key</th>
+                <th scope="col">Value</th>
+                <th scope="col">Updated</th>
+                <th scope="col" class="text-center">Actions</th>
             </tr>
             </thead>
             <tbody id="tbody-text-id">
@@ -176,11 +178,7 @@ export function renderItemTable(container) {
             </tbody>
         </table>
     </div>
-    <div class="d-flex justify-content-end gap-2 mt-3">
-        <button id="btn-add-text-id" class="btn btn-primary btn-add">
-            <i class="bi bi-plus-circle"></i> Add New Text
-        </button>
-    </div>
+
 </div>
     `;
     container.appendChild(textContainer);
@@ -203,23 +201,23 @@ export async function loadTextItems() {
     bodyContainer.innerHTML = `
     ${textItems.map((item, index) => `
         <tr data-item-id="${item.id}">
-            <td>${index + 1}</td>
-            <td>${item.key} (id: ${item.itemNumber ?? '---'})</td>
-            <td>
-                <textarea class="form-control item-value" style="resize: none; overflow: hidden; min-height: 38px;" rows="1">${item.value}</textarea>
+            <td class="number-cell" data-label="No.">${index + 1}</td>
+            <td class="name-cell" data-label="Key">${item.key} <span class="item-id">(id: ${item.itemNumber ?? '---'})</span></td>
+            <td class="value-cell" data-label="Value">
+                <textarea aria-label="Text value" class="form-control item-value" rows="1">${item.value}</textarea>
             </td>
-            <td>${item.updatedAt}</td>
-            <td class="text-center">
-                <button class="btn btn-sm btn-success btn-update-row me-2" title="Update">
+            <td class="updated-cell" data-label="Updated">${item.updatedAt}</td>
+            <td class="actions-cell" data-label="Actions"><div class="row-actions">
+                <button class="btn btn-sm btn-success btn-update-row" title="Save changes" aria-label="Save changes">
                     <i class="bi bi-arrow-repeat"></i>
                 </button>
-                <button class="btn btn-sm btn-info btn-copy-row me-2" title="Copy">
+                <button class="btn btn-sm btn-info btn-copy-row" title="Copy text" aria-label="Copy text">
                     <i class="bi bi-copy"></i>
                 </button>
-                <button class="btn btn-sm btn-danger btn-delete-row" title="Delete">
+                <button class="btn btn-sm btn-danger btn-delete-row" title="Delete text" aria-label="Delete text">
                     <i class="bi bi-trash"></i>
                 </button>
-            </td>
+            </div></td>
         </tr>
         `).join(' ')}
     `;
