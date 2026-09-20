@@ -1,17 +1,121 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180" fill="none" role="img" aria-labelledby="title">
-  <title id="title">Text and files connected across devices</title>
-  <!-- A compact illustration with a scalable viewBox for every screen size. -->
-  <rect x="20" y="20" width="280" height="140" rx="70" fill="#EAF0F8"/>
-  <path d="M105 90H215" stroke="#B4C7E5" stroke-width="2" stroke-dasharray="4 7"/>
-  <rect x="47" y="36" width="70" height="112" rx="14" fill="white" stroke="#CCD8E8" stroke-width="2"/>
-  <path d="M73 46H91" stroke="#CCD8E8" stroke-width="3" stroke-linecap="round"/>
-  <rect x="60" y="65" width="44" height="43" rx="7" fill="#EEF3FD"/>
-  <path d="M70 78H94M70 86H94M70 94H84" stroke="#7293C9" stroke-width="3" stroke-linecap="round"/>
-  <circle cx="82" cy="134" r="3" fill="#CCD8E8"/>
-  <rect x="197" y="47" width="79" height="83" rx="10" fill="white" stroke="#CCD8E8" stroke-width="2"/>
-  <path d="M212 77V69A4 4 0 0 1 216 65H229L234 72H257A4 4 0 0 1 261 76V109A4 4 0 0 1 257 113H216A4 4 0 0 1 212 109Z" fill="#E6F4EF"/>
-  <path d="M230 90H244M237 83V97" stroke="#4C9E87" stroke-width="3" stroke-linecap="round"/>
-  <path d="M190 138H282" stroke="#CCD8E8" stroke-width="4" stroke-linecap="round"/>
-  <rect x="138" y="67" width="44" height="44" rx="14" fill="#245EDB"/>
-  <path d="M148 83H172L167 78M172 95H148L153 100" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 240" fill="none" role="img" aria-labelledby="transfer-title transfer-description">
+    <title id="transfer-title">Transfer across devices</title>
+    <desc id="transfer-description">Text and file packets travel between a phone and a laptop around a gently rotating sync indicator.</desc>
+    <defs>
+        <linearGradient id="hub-fill" x1="178" y1="98" x2="225" y2="150" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#3877EE"/>
+            <stop offset="1" stop-color="#245EDB"/>
+        </linearGradient>
+        <linearGradient id="ambient-fill" x1="60" y1="50" x2="338" y2="195" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#EDF3FD"/>
+            <stop offset="1" stop-color="#EAF5F1"/>
+        </linearGradient>
+        <style>
+            /* CSS animation stays inside the SVG so it also works as an img source. */
+            .phone { animation: float-device 5s ease-in-out infinite; }
+            .laptop { animation: float-device 5s ease-in-out -2.5s infinite; }
+            .sync-orbit {
+                transform-origin: 200px 120px;
+                animation: rotate-orbit 9s linear infinite;
+            }
+            .outgoing { animation: send-text 4.8s linear infinite; }
+            .incoming { animation: send-file 4.8s linear -2.4s infinite; }
+            .text-line { animation: text-activity 4.8s ease-in-out infinite; }
+            .text-line-delayed { animation-delay: .3s; }
+            .file-signal { animation: file-activity 4.8s ease-in-out -2.4s infinite; }
+            @keyframes float-device {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-4px); }
+            }
+            @keyframes rotate-orbit {
+                to { transform: rotate(360deg); }
+            }
+            /* Packets follow shallow arcs and fade only at the device endpoints. */
+            @keyframes send-text {
+                0% { transform: translate(102px, 80px); opacity: 0; }
+                10% { opacity: 1; }
+                25% { transform: translate(151px, 54px); }
+                50% { transform: translate(200px, 45px); }
+                75% { transform: translate(249px, 54px); }
+                90% { opacity: 1; }
+                100% { transform: translate(298px, 80px); opacity: 0; }
+            }
+            @keyframes send-file {
+                0% { transform: translate(298px, 166px); opacity: 0; }
+                10% { opacity: 1; }
+                25% { transform: translate(249px, 187px); }
+                50% { transform: translate(200px, 194px); }
+                75% { transform: translate(151px, 187px); }
+                90% { opacity: 1; }
+                100% { transform: translate(102px, 166px); opacity: 0; }
+            }
+            @keyframes text-activity {
+                0%, 100% { opacity: .45; }
+                25%, 65% { opacity: 1; }
+            }
+            @keyframes file-activity {
+                0%, 100% { opacity: .35; }
+                30%, 65% { opacity: 1; }
+            }
+            /* Keep a complete static illustration when reduced motion is requested. */
+            @media (prefers-reduced-motion: reduce) {
+                .phone, .laptop, .sync-orbit, .outgoing, .incoming, .text-line, .file-signal {
+                    animation: none;
+                }
+            }
+        </style>
+    </defs>
+
+    <!-- The roomy viewBox keeps every moving element inside the mobile image bounds. -->
+    <ellipse cx="200" cy="122" rx="177" ry="87" fill="url(#ambient-fill)"/>
+    <path d="M102 80Q200 10 298 80" stroke="#C9D8EF" stroke-width="1.5" stroke-dasharray="3 6"/>
+    <path d="M102 166Q200 222 298 166" stroke="#C1DFD5" stroke-width="1.5" stroke-dasharray="3 6"/>
+    <path d="M111 120H279" stroke="#D2DEEF" stroke-width="1.5"/>
+    <circle cx="133" cy="120" r="3" fill="#A8C1E8"/>
+    <circle cx="258" cy="120" r="3" fill="#A8CDBF"/>
+
+    <!-- Device artwork floats separately from the stationary connection paths. -->
+    <g class="phone">
+        <rect x="42" y="67" width="76" height="124" rx="15" fill="#DCE6F3" opacity=".5"/>
+        <rect x="40" y="62" width="76" height="124" rx="15" fill="white" stroke="#C3D2E7" stroke-width="2"/>
+        <path d="M67 73H89" stroke="#C3D2E7" stroke-width="3" stroke-linecap="round"/>
+        <rect x="50" y="89" width="56" height="66" rx="8" fill="#F0F5FE"/>
+        <rect x="59" y="100" width="18" height="4" rx="2" fill="#245EDB"/>
+        <path class="text-line" d="M59 114H96M59 122H96" stroke="#7A9DD5" stroke-width="3" stroke-linecap="round"/>
+        <path class="text-line text-line-delayed" d="M59 130H83M59 138H90" stroke="#7A9DD5" stroke-width="3" stroke-linecap="round"/>
+        <path d="M69 175H87" stroke="#D6E0EE" stroke-width="3" stroke-linecap="round"/>
+    </g>
+    <g class="laptop">
+        <rect x="277" y="79" width="95" height="76" rx="9" fill="#DCE6F3" opacity=".5"/>
+        <rect x="274" y="75" width="95" height="76" rx="9" fill="white" stroke="#C3D2E7" stroke-width="2"/>
+        <rect x="282" y="83" width="79" height="58" rx="4" fill="#F2F8F6"/>
+        <path d="M301 105V99A3 3 0 0 1 304 96H315L320 102H339A3 3 0 0 1 342 105V126A3 3 0 0 1 339 129H304A3 3 0 0 1 301 126Z" fill="#D4EBE2"/>
+        <path d="M301 108H342" stroke="#AED5C6" stroke-width="1.5"/>
+        <path d="M317 119H327M322 114V124" stroke="#438F78" stroke-width="2" stroke-linecap="round"/>
+        <circle class="file-signal" cx="350" cy="91" r="3" fill="#53A48A"/>
+        <path d="M267 159H376L371 166H273Z" fill="#D2DDED"/>
+        <path d="M310 159H335" stroke="#AEBFD7" stroke-width="2" stroke-linecap="round"/>
+    </g>
+
+    <!-- A slow orbit conveys ongoing activity without implying measured progress. -->
+    <circle cx="200" cy="120" r="39" fill="#F8FAFD" stroke="#DFE8F5"/>
+    <g class="sync-orbit">
+        <path d="M200 81A39 39 0 0 1 239 120" stroke="#6894EB" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M200 159A39 39 0 0 1 161 120" stroke="#78BDA5" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="239" cy="120" r="3.5" fill="#6894EB"/>
+        <circle cx="161" cy="120" r="3.5" fill="#78BDA5"/>
+    </g>
+    <rect x="174" y="97" width="52" height="52" rx="16" fill="#245EDB" opacity=".12"/>
+    <rect x="174" y="94" width="52" height="52" rx="16" fill="url(#hub-fill)"/>
+    <path d="M188 113H212L207 108M212 127H188L193 132" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <!-- Static positions remain meaningful when animations are disabled. -->
+    <g class="outgoing" transform="translate(164 49)">
+        <rect x="-10" y="-12" width="20" height="24" rx="5" fill="white" stroke="#729AE3" stroke-width="1.5"/>
+        <path d="M-5-5H5M-5 0H5M-5 5H1" stroke="#4779D3" stroke-width="1.5" stroke-linecap="round"/>
+    </g>
+    <g class="incoming" transform="translate(235 191)">
+        <rect x="-12" y="-10" width="24" height="20" rx="5" fill="white" stroke="#8FBFAC" stroke-width="1.5"/>
+        <path d="M-6-1L-1-5L5 1M-5 5H6" stroke="#52947C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
 </svg>
