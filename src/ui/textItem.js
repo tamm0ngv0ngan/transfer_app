@@ -3,6 +3,71 @@ import * as bootstrap from "bootstrap";
 import {addTextItem, deleteTextItem, getAllTextItems, updateTextItem} from "../repository/db.js";
 
 
+let itemValueResizeObserver = null;
+let itemValueWidths = new WeakMap();
+let itemValueResizeFrame = null;
+const pendingItemValueTextareas = new Set();
+
+/**
+ * Match the textarea height to all wrapped lines, including its borders.
+ * Keeping overflow automatic shows a scrollbar only after a manual shrink.
+ * @param {HTMLTextAreaElement} textarea
+ */
+function resizeTextareaToContent(textarea) {
+    const style = window.getComputedStyle(textarea);
+    const borderHeight = parseFloat(style.borderTopWidth) + parseFloat(style.borderBottomWidth);
+    textarea.style.height = 'auto';
+    textarea.style.height = Math.ceil(textarea.scrollHeight + borderHeight) + 'px';
+}
+
+/**
+ * Recalculate wrapping when the table width changes without overriding a
+ * vertical resize made by the user.
+ * @param {NodeListOf<HTMLTextAreaElement>} textareas
+ */
+function setupItemValueResize(textareas) {
+    itemValueResizeObserver?.disconnect();
+    if (itemValueResizeFrame) {
+        cancelAnimationFrame(itemValueResizeFrame);
+        itemValueResizeFrame = null;
+    }
+    pendingItemValueTextareas.clear();
+    itemValueWidths = new WeakMap();
+
+    if (typeof ResizeObserver === 'undefined') {
+        textareas.forEach(textarea => resizeTextareaToContent(textarea));
+        return;
+    }
+
+    itemValueResizeObserver = new ResizeObserver(entries => {
+        entries.forEach(entry => {
+            const boxSize = entry.borderBoxSize?.[0] || entry.borderBoxSize;
+            const width = boxSize?.inlineSize || entry.target.getBoundingClientRect().width;
+            const previousWidth = itemValueWidths.get(entry.target);
+
+            // Ignore height-only changes caused by the user's resize handle.
+            if (!width || (previousWidth && Math.abs(previousWidth - width) < 0.5)) return;
+
+            itemValueWidths.set(entry.target, width);
+            pendingItemValueTextareas.add(entry.target);
+        });
+
+        // Update height in the next frame to avoid a ResizeObserver feedback loop.
+        if (!itemValueResizeFrame && pendingItemValueTextareas.size) {
+            itemValueResizeFrame = requestAnimationFrame(() => {
+                pendingItemValueTextareas.forEach(textarea => {
+                    if (textarea.isConnected) resizeTextareaToContent(textarea);
+                });
+                pendingItemValueTextareas.clear();
+                itemValueResizeFrame = null;
+            });
+        }
+    });
+
+    textareas.forEach(textarea => itemValueResizeObserver.observe(textarea));
+}
+
+
 async function handleConfirmTextAdd() {
     const key = document.getElementById("newTextKeyInput").value.trim();
     const value = document.getElementById("newTextValueInput").value.trim();
@@ -225,11 +290,8 @@ export async function loadTextItems() {
     const existingRows = bodyContainer.querySelectorAll('tr');
     existingRows.forEach(existingRow => {
         attachRowListeners(existingRow);
-
-        const textarea = existingRow.querySelector('.item-value');
-        if (textarea) {
-            textarea.style.height = 'auto';
-            textarea.style.height = textarea.scrollHeight + 'px';
-        }
     });
+
+    // This also waits for a hidden authenticated workspace to become visible.
+    setupItemValueResize(bodyContainer.querySelectorAll('.item-value'));
 }

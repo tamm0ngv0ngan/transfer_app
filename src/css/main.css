@@ -249,6 +249,13 @@ body {
     background: #fcfdff;
 }
 
+/* Displayed values grow to their wrapped content; the add modal keeps its cap. */
+
+.value-cell .item-value {
+    max-height: none;
+    overflow-y: auto;
+}
+
 .row-actions {
     display: flex;
     justify-content: center;
